@@ -18,29 +18,19 @@ const SLIDESHOW_IMAGES = [
 
 function LandingPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % SLIDESHOW_IMAGES.length);
-    }, 3000); // Change image every 2.5 seconds
+    }, 3000); // Change image every 3 seconds
 
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div className="w-full">
-      {/* Black Navbar - Appears when scrolling */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 text-white transition-all duration-300 ${isScrolled ? "opacity-100 visible" : "opacity-0 invisible"}`}>
+      {/* Black Navbar - Always Visible */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 text-white">
         <div className="mx-auto max-w-7xl px-6 md:px-12 py-4 flex items-center justify-end gap-8">
           <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Explore</a>
           <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">About</a>

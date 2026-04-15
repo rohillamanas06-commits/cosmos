@@ -25,33 +25,128 @@ const PAGE_SIZE = 24;
 // Curated NASA/public domain image map for cosmic object categories
 const CATEGORY_IMAGES: Record<string, string[]> = {
   "Galaxy": [
+    "/taneli-lahtinen-3G8p__Lv8iM-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/NGC_4414_%28NASA-med%29.jpg/1200px-NGC_4414_%28NASA-med%29.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Whirlpool_galaxyNASA.jpg/1200px-Whirlpool_galaxyNASA.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/M82_HST_ACS_2006-14-a_print.jpg/1200px-M82_HST_ACS_2006-14-a_print.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Sombrero_Galaxy_Hubble_Heritage.full.jpg/1200px-Sombrero_Galaxy_Hubble_Heritage.full.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Cartwheel_Galaxy.jpg/1200px-Cartwheel_Galaxy.jpg",
   ],
   "Black Hole": [
+    "/nasa-hubble-space-telescope-17hchodU6sA-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/1200px-Black_hole_-_Messier_87_crop_max_res.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Black_hole_event_horizon_simulation.jpg/1200px-Black_hole_event_horizon_simulation.jpg",
   ],
   "Nebula": [
+    "/aldebaran-s-qtRF_RxCAo0-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/NGC_604.jpg/1200px-NGC_604.jpg",
   ],
   "Star": [
+    "/ivana-cajina-IwK0lkENPKY-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/1200px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg/1200px-Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg",
   ],
   "Pulsar": [
+    "/nasa-hubble-space-telescope-e_VUMccLu-k-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
   ],
   "Quasar": [
+    "/nasa-hubble-space-telescope-gbw_PRLvhJA-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
   ],
-  "Supernova": [
+  "Supernova Remnant": [
+    "/tengyart-Q78W18T-dss-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_nebula_original.jpg/1200px-Crab_nebula_original.jpg",
   ],
   "Exoplanet": [
+    "/nasa-hubble-space-telescope-hdDjmN0iraw-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Exoplanet_Comparison_WASP-17b.png/1200px-Exoplanet_Comparison_WASP-17b.png",
   ],
   "Galaxy Cluster": [
+    "/nasa-hubble-space-telescope-tcgaCmVyueY-unsplash.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+  "Brown Dwarf": [
+    "/brown dwarf.jpg",
+  ],
+  "Moon": [
+    "/moon.jpg",
+  ],
+  "Neutron Star": [
+    "/neutron star.jpg",
+  ],
+  "Planet": [
+    "/planet.jpg",
+  ],
+  "Cosmic String": [
+    "/cosmic string.jpg",
+  ],
+  "Dark Matter Structure": [
+    "/dark matter.jpg",
+  ],
+  "Gamma-Ray Burst": [
+    "/gamma ray.jpg",
+  ],
+  "Primordial Black Hole": [
+    "/primordial black hole.jpg",
+  ],
+  "Axion Star": [
+    "/axion star.jpg",
+  ],
+  "Fast Radio Burst": [
+    "/radio burst.jpg",
+  ],
+  "Variable Star": [
+    "/variable star.jpg",
+  ],
+  "Blazar": [
+    "/blazer.jpg",
+  ],
+  "Space Mission": [
+    "/space mission.jpg",
+  ],
+  "Ring Galaxy": [
+    "/ring galaxies.jpg",
+  ],
+  "Interacting Galaxies": [
+    "/interacting glaxies.jpg",
+  ],
+  "X-ray Source": [
+    "/xray source.jpg",
+  ],
+  "Star Cluster": [
+    "/star cluster.jpg",
+  ],
+  "Dwarf Planet": [
+    "/dwarf planet.jpg",
+  ],
+  "Planetary Nebula": [
+    "/planetery nebula.jpg",
+  ],
+  "Dark Nebula": [
+    "/dark nebula.jpg",
+  ],
+  "Protoplanetary Nebula": [
+    "/protoplanetry nebula.jpg",
+  ],
+  "Cosmic Structure": [
+    "/cosmic structure.jpg",
+  ],
+  "Cosmological Structure": [
+    "/cosmological structure.jpg",
+  ],
+  "Edge-Case Phenomenon": [
+    "/edge class phenomenon.jpg",
+  ],
+  "Hypothetical Discovery": [
+    "/hypothetical discovery.jpg",
+  ],
+  "Simulated Object": [
+    "/simulated object.jpg",
+  ],
+  "Interstellar Object": [
+    "/interstellar object.jpg",
   ],
 };
 
@@ -359,7 +454,7 @@ function ExplorePage() {
   return (
     <div className={`min-h-screen ${bg} transition-colors duration-200`}>
       {/* Header */}
-      <header className={`sticky top-0 z-40 border-b ${borderColor} ${headerBg} backdrop-blur-xl`}>
+      <header className={`fixed top-0 left-0 right-0 z-40 border-b ${borderColor} ${headerBg} backdrop-blur-xl`}>
         <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
           {/* Left */}
           <div className="flex items-center gap-6">
@@ -376,7 +471,7 @@ function ExplorePage() {
       </header>
 
       {/* Page layout: list + panel */}
-      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7">
+      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7 pt-20">
         {/* Category Selection Carousel */}
         {!selectedCategory && (
           <div className="mb-10">
