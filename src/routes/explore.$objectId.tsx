@@ -40,8 +40,62 @@ const CATEGORY_IMAGES: Record<string, string[]> = {
 
 const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg";
 
+// Specific name-based mapping for galaxies - matches exact names from database
+const GALAXY_NAME_MAP: Record<string, string> = {
+  "Milky Way": "/milky way galaxy.jpg",
+  "Triangulum Galaxy": "/triangulum galaxy.jpg",
+  "Whirlpool Galaxy": "/Whirlpool Galaxy (M51a).jpg",
+  "Cartwheel Galaxy": "/Cartwheel Galaxy.jpg",
+  "Sombrero Galaxy": "/Sombrero Galaxy (M104).jpg",
+  "Pinwheel Galaxy": "/Pinwheel Galaxy (M101).jpg",
+  "Centaurus A": "/Centaurus A (NGC 5128).jpg",
+  "Messier 87": "/Messier 87 (M87).jpg",
+  "Sculptor Galaxy": "/Sculptor Galaxy (NGC 253).jpg",
+  "Cigar Galaxy": "/Cigar Galaxy (M82).jpg",
+  "Large Magellanic Cloud": "/Large Magellanic Cloud (LMC).jpg",
+  "Small Magellanic Cloud": "/Small Magellanic Cloud (SMC).jpg",
+};
+
+const PULSAR_NAME_MAP: Record<string, string> = {
+  "PSR J1748-2446ad": "/PSR J1748-2446ad.jpg",
+};
+
+const SUPERNOVA_NAME_MAP: Record<string, string> = {
+  "SN 1987A": "/SN 1987A.jpg",
+  "Crab Nebula (M1, NGC 1952)": "/Crab Nebula (M1, NGC 1952).jpg",
+  "Tycho Supernova Remnant — SNR B1572+0449": "/Tycho Supernova Remnant — SNR B1572+0449.jpg",
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
+  
+  // Use name-based mapping for galaxies - check exact name match
+  if (cat === "Galaxy") {
+    if (GALAXY_NAME_MAP[obj.name]) {
+      return GALAXY_NAME_MAP[obj.name];
+    }
+    // Fallback: try to find partial match
+    for (const [key, value] of Object.entries(GALAXY_NAME_MAP)) {
+      if (obj.name.toLowerCase().includes(key.toLowerCase())) {
+        return value;
+      }
+    }
+  }
+  
+  // Use name-based mapping for pulsars
+  if (cat === "Pulsar") {
+    if (PULSAR_NAME_MAP[obj.name]) {
+      return PULSAR_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for supernovae and supernova remnants
+  if (cat === "Supernova" || cat === "Supernova Remnant") {
+    if (SUPERNOVA_NAME_MAP[obj.name]) {
+      return SUPERNOVA_NAME_MAP[obj.name];
+    }
+  }
+  
   const images = CATEGORY_IMAGES[cat];
   if (images && images.length > 0) {
     const idx = obj.id.charCodeAt(obj.id.length - 1) % images.length;

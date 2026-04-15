@@ -230,3 +230,26 @@
 ::-webkit-scrollbar-track { background: var(--color-background); }
 ::-webkit-scrollbar-thumb { background: var(--color-muted-foreground); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+/* ── Explore page performance ── */
+
+/* Let the browser skip layout/paint for off-screen grid cards */
+.grid > [class*="rounded-xl"] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 280px;
+}
+
+/* Force GPU compositing on card images to avoid main-thread repaints */
+.grid img {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Kill all animations for users who prefer reduced motion (also saves CPU) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
