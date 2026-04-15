@@ -1,0 +1,232 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Cosmos custom colors */
+  --color-cosmos-nebula: var(--cosmos-nebula);
+  --color-cosmos-solar: var(--cosmos-solar);
+  --color-cosmos-aurora: var(--cosmos-aurora);
+  --color-cosmos-void: var(--cosmos-void);
+  --color-cosmos-stardust: var(--cosmos-stardust);
+  --color-cosmos-supernova: var(--cosmos-supernova);
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.13 0.02 265);
+  --card: oklch(0.98 0.005 265);
+  --card-foreground: oklch(0.13 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.02 265);
+  --primary: oklch(0.55 0.25 280);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 265);
+  --secondary-foreground: oklch(0.25 0.03 265);
+  --muted: oklch(0.96 0.01 265);
+  --muted-foreground: oklch(0.55 0.03 265);
+  --accent: oklch(0.96 0.01 265);
+  --accent-foreground: oklch(0.25 0.03 265);
+  --destructive: oklch(0.58 0.24 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.01 265);
+  --input: oklch(0.92 0.01 265);
+  --ring: oklch(0.55 0.25 280);
+  --chart-1: oklch(0.65 0.22 41);
+  --chart-2: oklch(0.6 0.12 185);
+  --chart-3: oklch(0.4 0.07 227);
+  --chart-4: oklch(0.83 0.19 84);
+  --chart-5: oklch(0.77 0.19 70);
+  --sidebar: oklch(0.98 0.005 265);
+  --sidebar-foreground: oklch(0.13 0.02 265);
+  --sidebar-primary: oklch(0.55 0.25 280);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0.01 265);
+  --sidebar-accent-foreground: oklch(0.25 0.03 265);
+  --sidebar-border: oklch(0.92 0.01 265);
+  --sidebar-ring: oklch(0.55 0.25 280);
+
+  /* Cosmos landing page colors */
+  --cosmos-nebula: oklch(0.6 0.28 300);
+  --cosmos-solar: oklch(0.82 0.18 75);
+  --cosmos-aurora: oklch(0.7 0.2 165);
+  --cosmos-void: oklch(0.15 0.04 280);
+  --cosmos-stardust: oklch(0.85 0.12 230);
+  --cosmos-supernova: oklch(0.7 0.25 30);
+}
+
+.dark {
+  --background: oklch(0.1 0.02 265);
+  --foreground: oklch(0.95 0.01 265);
+  --card: oklch(0.15 0.02 265);
+  --card-foreground: oklch(0.95 0.01 265);
+  --popover: oklch(0.15 0.02 265);
+  --popover-foreground: oklch(0.95 0.01 265);
+  --primary: oklch(0.7 0.2 280);
+  --primary-foreground: oklch(0.1 0.02 265);
+  --secondary: oklch(0.2 0.03 265);
+  --secondary-foreground: oklch(0.95 0.01 265);
+  --muted: oklch(0.2 0.03 265);
+  --muted-foreground: oklch(0.65 0.03 265);
+  --accent: oklch(0.2 0.03 265);
+  --accent-foreground: oklch(0.95 0.01 265);
+  --destructive: oklch(0.7 0.19 22);
+  --destructive-foreground: oklch(0.95 0.01 265);
+  --border: oklch(0.25 0.03 265);
+  --input: oklch(0.25 0.03 265);
+  --ring: oklch(0.7 0.2 280);
+  --chart-1: oklch(0.49 0.24 264);
+  --chart-2: oklch(0.7 0.17 162);
+  --chart-3: oklch(0.77 0.19 70);
+  --chart-4: oklch(0.63 0.27 304);
+  --chart-5: oklch(0.65 0.25 16);
+  --sidebar: oklch(0.15 0.02 265);
+  --sidebar-foreground: oklch(0.95 0.01 265);
+  --sidebar-primary: oklch(0.7 0.2 280);
+  --sidebar-primary-foreground: oklch(0.95 0.01 265);
+  --sidebar-accent: oklch(0.2 0.03 265);
+  --sidebar-accent-foreground: oklch(0.95 0.01 265);
+  --sidebar-border: oklch(0.25 0.03 265);
+  --sidebar-ring: oklch(0.7 0.2 280);
+
+  --cosmos-nebula: oklch(0.7 0.28 300);
+  --cosmos-solar: oklch(0.85 0.2 75);
+  --cosmos-aurora: oklch(0.75 0.22 165);
+  --cosmos-void: oklch(0.08 0.03 280);
+  --cosmos-stardust: oklch(0.75 0.15 230);
+  --cosmos-supernova: oklch(0.75 0.25 30);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* Starfield background for landing */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--cosmos-nebula), 0 0 40px transparent; }
+  50% { box-shadow: 0 0 30px var(--cosmos-nebula), 0 0 60px var(--cosmos-nebula); }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbit 20s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Landing gradient */
+.cosmos-gradient {
+  background: linear-gradient(
+    135deg,
+    oklch(0.08 0.04 280) 0%,
+    oklch(0.12 0.08 300) 25%,
+    oklch(0.1 0.06 260) 50%,
+    oklch(0.08 0.05 200) 75%,
+    oklch(0.06 0.03 280) 100%
+  );
+}
+
+.cosmos-hero-gradient {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.08 0.04 280 / 80%) 100%
+  );
+}
+
+/* Category badge colors */
+.badge-galaxy { background: oklch(0.55 0.25 280 / 20%); color: oklch(0.75 0.2 280); border: 1px solid oklch(0.55 0.25 280 / 30%); }
+.badge-black-hole { background: oklch(0.3 0.05 265 / 30%); color: oklch(0.8 0.02 265); border: 1px solid oklch(0.4 0.03 265 / 30%); }
+.badge-star { background: oklch(0.82 0.18 75 / 20%); color: oklch(0.75 0.18 75); border: 1px solid oklch(0.82 0.18 75 / 30%); }
+.badge-nebula { background: oklch(0.6 0.2 300 / 20%); color: oklch(0.75 0.2 300); border: 1px solid oklch(0.6 0.2 300 / 30%); }
+.badge-pulsar { background: oklch(0.7 0.2 165 / 20%); color: oklch(0.75 0.2 165); border: 1px solid oklch(0.7 0.2 165 / 30%); }
+.badge-quasar { background: oklch(0.7 0.25 30 / 20%); color: oklch(0.75 0.2 30); border: 1px solid oklch(0.7 0.25 30 / 30%); }
+.badge-exoplanet { background: oklch(0.6 0.18 200 / 20%); color: oklch(0.75 0.15 200); border: 1px solid oklch(0.6 0.18 200 / 30%); }
+.badge-default { background: oklch(0.5 0.1 265 / 20%); color: oklch(0.7 0.08 265); border: 1px solid oklch(0.5 0.1 265 / 30%); }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-thumb { background: var(--color-muted-foreground); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
