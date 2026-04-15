@@ -26,46 +26,46 @@ const PAGE_SIZE = 24;
 const CATEGORY_IMAGES: Record<string, string[]> = {
   "Galaxy": [
     "/taneli-lahtinen-3G8p__Lv8iM-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/NGC_4414_%28NASA-med%29.jpg/1200px-NGC_4414_%28NASA-med%29.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Whirlpool_galaxyNASA.jpg/1200px-Whirlpool_galaxyNASA.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/M82_HST_ACS_2006-14-a_print.jpg/1200px-M82_HST_ACS_2006-14-a_print.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Sombrero_Galaxy_Hubble_Heritage.full.jpg/1200px-Sombrero_Galaxy_Hubble_Heritage.full.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Cartwheel_Galaxy.jpg/1200px-Cartwheel_Galaxy.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/NGC_4414_%28NASA-med%29.jpg/600px-NGC_4414_%28NASA-med%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Whirlpool_galaxyNASA.jpg/600px-Whirlpool_galaxyNASA.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/M82_HST_ACS_2006-14-a_print.jpg/600px-M82_HST_ACS_2006-14-a_print.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Sombrero_Galaxy_Hubble_Heritage.full.jpg/600px-Sombrero_Galaxy_Hubble_Heritage.full.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Cartwheel_Galaxy.jpg/600px-Cartwheel_Galaxy.jpg",
   ],
   "Black Hole": [
     "/nasa-hubble-space-telescope-17hchodU6sA-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/1200px-Black_hole_-_Messier_87_crop_max_res.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Black_hole_event_horizon_simulation.jpg/1200px-Black_hole_event_horizon_simulation.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/600px-Black_hole_-_Messier_87_crop_max_res.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Black_hole_event_horizon_simulation.jpg/600px-Black_hole_event_horizon_simulation.jpg",
   ],
   "Nebula": [
     "/aldebaran-s-qtRF_RxCAo0-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/NGC_604.jpg/1200px-NGC_604.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crab_Nebula.jpg/600px-Crab_Nebula.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/NGC_604.jpg/600px-NGC_604.jpg",
   ],
   "Star": [
     "/ivana-cajina-IwK0lkENPKY-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/1200px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg/1200px-Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/600px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg/600px-Sirius_A_and_B_Hubble_Photo_-_annotated.full.jpg",
   ],
   "Pulsar": [
     "/nasa-hubble-space-telescope-e_VUMccLu-k-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Crab_Nebula.jpg/600px-Crab_Nebula.jpg",
   ],
   "Quasar": [
     "/nasa-hubble-space-telescope-gbw_PRLvhJA-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/600px-Hubble_ultra_deep_field.jpg",
   ],
   "Supernova Remnant": [
     "/tengyart-Q78W18T-dss-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_nebula_original.jpg/1200px-Crab_nebula_original.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_nebula_original.jpg/600px-Crab_nebula_original.jpg",
   ],
   "Exoplanet": [
     "/nasa-hubble-space-telescope-hdDjmN0iraw-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Exoplanet_Comparison_WASP-17b.png/1200px-Exoplanet_Comparison_WASP-17b.png",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Exoplanet_Comparison_WASP-17b.png/600px-Exoplanet_Comparison_WASP-17b.png",
   ],
   "Galaxy Cluster": [
     "/nasa-hubble-space-telescope-tcgaCmVyueY-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/600px-Hubble_ultra_deep_field.jpg",
   ],
   "Brown Dwarf": [
     "/brown dwarf.jpg",
@@ -150,7 +150,7 @@ const CATEGORY_IMAGES: Record<string, string[]> = {
   ],
 };
 
-const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg";
+const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/600px-Hubble_ultra_deep_field.jpg";
 
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
@@ -339,11 +339,13 @@ function ObjectCard({
       }`}
     >
       {/* Image */}
-      <div className="relative w-full aspect-video bg-black/20 overflow-hidden">
+      <div className="relative w-full aspect-video bg-gradient-to-br from-gray-700 to-gray-900 overflow-hidden">
         <img
           src={imageUrl}
           alt={obj.name}
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
           }}
@@ -454,7 +456,7 @@ function ExplorePage() {
   return (
     <div className={`min-h-screen ${bg} transition-colors duration-200`}>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 border-b ${borderColor} ${headerBg} backdrop-blur-xl`}>
+      <header className={`sticky top-0 z-40 border-b ${borderColor} ${headerBg} backdrop-blur-xl`}>
         <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
           {/* Left */}
           <div className="flex items-center gap-6">
@@ -471,7 +473,7 @@ function ExplorePage() {
       </header>
 
       {/* Page layout: list + panel */}
-      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7 pt-20">
+      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7">
         {/* Category Selection Carousel */}
         {!selectedCategory && (
           <div className="mb-10">
@@ -500,6 +502,8 @@ function ExplorePage() {
                       src={CATEGORY_IMAGES[cat]?.[0] || FALLBACK_IMAGE}
                       alt={cat}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
                       }}

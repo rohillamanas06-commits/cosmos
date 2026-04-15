@@ -13,7 +13,6 @@ export const Route = createFileRoute("/")({
 // Images from public folder
 const SLIDESHOW_IMAGES = [
   "/public/pawel-nolbert-62OK9xwVA0c-unsplash.jpg",
-   "/nicolas-lobos-NR_tXTuyTak-unsplash.jpg",
 ];
 
 function LandingPage() {
@@ -31,14 +30,17 @@ function LandingPage() {
     <div className="w-full">
       {/* Black Navbar - Always Visible */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 text-white">
-        <div className="mx-auto max-w-7xl px-6 md:px-12 py-4 flex items-center justify-end gap-8">
-          <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Explore</a>
-          <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">About</a>
-          <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">Contact</a>
-          <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms</a>
-          <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy</a>
-          <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">Cookies</a>
-          <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">License</a>
+        <div className="mx-auto max-w-7xl px-6 md:px-12 py-4 flex items-center justify-between gap-8">
+          <a href="/" className="font-semibold text-white hover:text-white/80 transition-colors">Cosmos</a>
+          <div className="flex items-center gap-8">
+            <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Explore</a>
+            <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">About</a>
+            <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">Contact</a>
+            <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms</a>
+            <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy</a>
+            <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">Cookies</a>
+            <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">License</a>
+          </div>
         </div>
       </nav>
 
