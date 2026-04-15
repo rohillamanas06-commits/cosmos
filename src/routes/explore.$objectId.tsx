@@ -71,6 +71,17 @@ const GALAXY_CLUSTER_NAME_MAP: Record<string, string> = {
   "Bullet Cluster (1E 0657-56)": "/Bullet Cluster (1E 0657-56).jpg"
 };
 
+const PLANET_NAME_MAP: Record<string, string> = {
+  "Mercury": "/mercury.jpg",
+  "Venus": "/venus.jpg",
+  "Earth": "/earth.jpg",
+  "Mars": "/mars.jpg",
+  "Jupiter": "/jupiter.jpg",
+  "Saturn": "/saturn.jpg",
+  "Uranus": "/uranus.jpg",
+  "Neptune": "/neptune.jpg",
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -108,6 +119,13 @@ function getImageForObject(obj: CosmicObject): string {
     }
   }
   
+  // Use name-based mapping for planets
+  if (cat === "Planet") {
+    if (PLANET_NAME_MAP[obj.name]) {
+      return PLANET_NAME_MAP[obj.name];
+    }
+  }
+
   const images = CATEGORY_IMAGES[cat];
   if (images && images.length > 0) {
     const idx = obj.id.charCodeAt(obj.id.length - 1) % images.length;

@@ -30,9 +30,9 @@ function LandingPage() {
     <div className="w-full">
       {/* Black Navbar - Always Visible */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 text-white">
-        <div className="mx-auto max-w-7xl px-6 md:px-12 py-4 flex items-center justify-between gap-8">
+        <div className="flex items-center px-6 md:px-12 py-4">
           <a href="/" className="font-semibold text-white hover:text-white/80 transition-colors">Cosmos</a>
-          <div className="flex items-center gap-8">
+          <div className="ml-auto flex items-center gap-8">
             <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Explore</a>
             <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">About</a>
             <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">Contact</a>
@@ -57,8 +57,8 @@ function LandingPage() {
 
       {/* Footer - Appears when scrolling down */}
       <footer className="relative z-10 bg-black/90 backdrop-blur-md border-t border-white/10 text-white">
-        <div className="mx-auto max-w-7xl px-6 md:px-12 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-20 mb-12">
+        <div className="w-full px-6 md:px-12 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 mb-16">
             {/* Company Info */}
             <div>
               <div className="flex items-center gap-2.5 mb-6">
@@ -83,10 +83,21 @@ function LandingPage() {
             {/* Products */}
             <div>
               <h3 className="font-display font-semibold text-white mb-6 flex items-center gap-2">
-                Products
+                Product
               </h3>
               <ul className="space-y-3">
                 <li><a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Cosmos Explorer</a></li>
+              </ul>
+            </div>
+
+            {/* Other Products */}
+            <div>
+              <h3 className="font-display font-semibold text-white mb-6">Other Products</h3>
+              <ul className="space-y-3">
+                <li><a href="https://www.resuai.co.in/" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors">ResuAI</a></li>
+                <li><a href="https://med-mate-ai-health-assistant-v2.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors">Med-Mate</a></li>
+                <li><a href="https://newsscope-ai-news-detector.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors">NewsScope</a></li>
+                <li><a href="https://cortex-ai-v1.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors">Cortex</a></li>
               </ul>
             </div>
 
