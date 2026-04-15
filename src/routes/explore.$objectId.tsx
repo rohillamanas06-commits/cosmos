@@ -69,6 +69,13 @@ const PULSAR_NAME_MAP: Record<string, string> = {
   "PSR J1748-2446ad": "/PSR J1748-2446ad.jpg",
 };
 
+const QUASAR_NAME_MAP: Record<string, string> = {
+  "3C 273": "/3C 273.jpg",
+  "PKS 2126-158": "/PKS 2126-158.jpg",
+  "Quasar J0313-1806": "/Quasar J0313-1806.jpg",
+  "S5 0014+81": "/S5 0014+81.jpg",
+};
+
 const SUPERNOVA_NAME_MAP: Record<string, string> = {
   "SN 1987A": "/SN 1987A.jpg",
   "Crab Nebula (M1, NGC 1952)": "/Crab Nebula (M1, NGC 1952).jpg",
@@ -183,6 +190,13 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Pulsar") {
     if (PULSAR_NAME_MAP[obj.name]) {
       return PULSAR_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for quasars
+  if (cat === "Quasar") {
+    if (QUASAR_NAME_MAP[obj.name]) {
+      return QUASAR_NAME_MAP[obj.name];
     }
   }
   
