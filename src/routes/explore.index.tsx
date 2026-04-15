@@ -16,6 +16,7 @@ export const Route = createFileRoute("/explore/")({
   }),
   validateSearch: (search: Record<string, any>) => ({
     page: search.page ? Number(search.page) : 0,
+    category: search.category || null,
   }),
   component: ExplorePage,
 });
@@ -269,7 +270,7 @@ function formatValue(val: any): string {
 
 // ─── Image Panel ─────────────────────────────────────────────────────────────
 
-function ImagePanel({ obj, onClose, dark, currentPage }: { obj: CosmicObject; onClose: () => void; dark: boolean; currentPage: number }) {
+function ImagePanel({ obj, onClose, dark, currentPage, category }: { obj: CosmicObject; onClose: () => void; dark: boolean; currentPage: number; category: string | null }) {
   const imageUrl = getImageForObject(obj);
 
   return (
@@ -381,7 +382,7 @@ function ImagePanel({ obj, onClose, dark, currentPage }: { obj: CosmicObject; on
         <Link
           to="/explore/$objectId"
           params={{ objectId: obj.id }}
-          search={{ page: currentPage }}
+          search={{ page: currentPage, category: category || null }}
           className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
             dark
               ? "bg-white text-black hover:bg-white/90"
@@ -469,12 +470,12 @@ function ObjectCard({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 function ExplorePage() {
-  const { page: initialPage } = Route.useSearch();
+  const { page: initialPage, category: initialCategory } = Route.useSearch();
   const navigate = useNavigate({ from: "/explore/" });
   const [objects, setObjects] = useState<CosmicObject[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(initialPage);
   const [dark, setDark] = useState(true);
@@ -483,8 +484,8 @@ function ExplorePage() {
   // Helper to update page and URL
   const handlePageChange = useCallback((newPage: number) => {
     setPage(newPage);
-    navigate({ search: { page: newPage } });
-  }, [navigate]);
+    navigate({ search: { page: newPage, category: selectedCategory } });
+  }, [navigate, selectedCategory]);
 
   useEffect(() => {
     loadCosmicData().then((data) => {
@@ -551,10 +552,20 @@ function ExplorePage() {
         <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
           {/* Left */}
           <div className="flex items-center gap-6">
-            <Link to="/" className={`flex items-center gap-2 ${textPrimary} hover:${textMuted} transition-colors text-sm font-medium`}>
-              <ArrowLeft className="h-4 w-4" />
-              Back to Home
-            </Link>
+            {selectedCategory ? (
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`flex items-center gap-2 ${textPrimary} hover:${textMuted} transition-colors text-sm font-medium`}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Explorer
+              </button>
+            ) : (
+              <Link to="/" className={`flex items-center gap-2 ${textPrimary} hover:${textMuted} transition-colors text-sm font-medium`}>
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Link>
+            )}
           </div>
 
           {/* Right */}
@@ -617,17 +628,9 @@ function ExplorePage() {
         {/* Active Category Header */}
         {selectedCategory && (
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-2xl font-bold ${textPrimary}`}>{selectedCategory}</h2>
-                <p className={`text-sm ${textMuted} mt-1`}>{filtered.length} cosmic objects found</p>
-              </div>
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${btnOutline}`}
-              >
-                View All Categories
-              </button>
+            <div className="mb-4">
+              <h2 className={`text-2xl font-bold ${textPrimary}`}>{selectedCategory}</h2>
+              <p className={`text-sm ${textMuted} mt-1`}>{filtered.length} cosmic objects found</p>
             </div>
             
             {/* Search Bar */}
@@ -723,7 +726,7 @@ function ExplorePage() {
               className="fixed inset-0 z-40 bg-black/40 sm:hidden"
               onClick={() => setActiveObject(null)}
             />
-            <ImagePanel obj={activeObject} onClose={() => setActiveObject(null)} dark={dark} currentPage={page} />
+            <ImagePanel obj={activeObject} onClose={() => setActiveObject(null)} dark={dark} currentPage={page} category={selectedCategory} />
           </>
         )}
       </AnimatePresence>

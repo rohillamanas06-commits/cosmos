@@ -143,6 +143,7 @@ export const Route = createFileRoute("/explore/$objectId")({
   }),
   validateSearch: (search: Record<string, any>) => ({
     page: search.page ? Number(search.page) : 0,
+    category: search.category || null,
   }),
   component: ObjectDetailPage,
 });
@@ -168,7 +169,7 @@ function formatValue(val: any): string {
 
 function ObjectDetailPage() {
   const { objectId } = Route.useParams();
-  const { page } = Route.useSearch();
+  const { page, category } = Route.useSearch();
   const [obj, setObj] = useState<CosmicObject | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -192,7 +193,7 @@ function ObjectDetailPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background">
         <h1 className="font-display text-2xl font-bold text-foreground">Object not found</h1>
-        <Link to="/explore" search={{ page }} className="mt-4 text-primary hover:underline">Back to explorer</Link>
+        <Link to="/explore" search={{ page, ...(category && { category }) }} className="mt-4 text-primary hover:underline">Back to explorer</Link>
       </div>
     );
   }
@@ -204,11 +205,11 @@ function ObjectDetailPage() {
         <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
           <Link
             to="/explore"
-            search={{ page }}
+            search={{ page, ...(category && { category }) }}
             className="flex items-center gap-2 text-white hover:text-white/50 transition-colors text-sm font-medium"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Explorer
+            Back to {category ? category : "Explorer"}
           </Link>
         </div>
       </header>
