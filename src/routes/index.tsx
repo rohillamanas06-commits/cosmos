@@ -45,6 +45,10 @@ function LandingPage() {
           <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">Explore</a>
           <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">About</a>
           <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">Contact</a>
+          <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms</a>
+          <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy</a>
+          <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">Cookies</a>
+          <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">License</a>
         </div>
       </nav>
 
