@@ -99,6 +99,49 @@ const MOON_NAME_MAP: Record<string, string> = {
   "Ganymede": "/Ganymede.jpg",
 };
 
+const STAR_NAME_MAP: Record<string, string> = {
+  "The Sun": "/the sun.jpg",
+  "Sirius": "/Sirius (Alpha Canis Majoris).jpg",
+  "Sirius A": "/Sirius (Alpha Canis Majoris).jpg",
+  "Alpha Canis Majoris": "/Sirius (Alpha Canis Majoris).jpg",
+  "Sirius (Alpha Canis Majoris)": "/Sirius (Alpha Canis Majoris).jpg",
+  "Proxima Centauri": "/Proxima Centauri.jpg",
+  "Alpha Centauri A": "/Alpha Centauri A (Rigil Kentaurus).jpg",
+  "Rigil Kentaurus": "/Alpha Centauri A (Rigil Kentaurus).jpg",
+  "Alpha Centauri A (Rigil Kentaurus)": "/Alpha Centauri A (Rigil Kentaurus).jpg",
+  "Alpha Centauri B": "/Alpha Centauri B (Toliman).jpg",
+  "Toliman": "/Alpha Centauri B (Toliman).jpg",
+  "Alpha Centauri B (Toliman)": "/Alpha Centauri B (Toliman).jpg",
+  "Alpha Centauri": "/Alpha Centauri System.jpg",
+  "Alpha Centauri System": "/Alpha Centauri System.jpg",
+  "Betelgeuse": "/Betelgeuse (Alpha Orionis).jpg",
+  "Alpha Orionis": "/Betelgeuse (Alpha Orionis).jpg",
+  "Betelgeuse (Alpha Orionis)": "/Betelgeuse (Alpha Orionis).jpg",
+  "Rigel": "/Rigel.jpg",
+  "Beta Orionis": "/Rigel.jpg",
+  "Arcturus": "/Arcturus (Alpha Boötis).jpg",
+  "Alpha Boötis": "/Arcturus (Alpha Boötis).jpg",
+  "Arcturus (Alpha Boötis)": "/Arcturus (Alpha Boötis).jpg",
+  "Vega": "/Vega (Alpha Lyrae).jpg",
+  "Alpha Lyrae": "/Vega (Alpha Lyrae).jpg",
+  "Vega (Alpha Lyrae)": "/Vega (Alpha Lyrae).jpg",
+  "Polaris": "/Polaris (Alpha Ursae Minoris).jpg",
+  "Alpha Ursae Minoris": "/Polaris (Alpha Ursae Minoris).jpg",
+  "Polaris (Alpha Ursae Minoris)": "/Polaris (Alpha Ursae Minoris).jpg",
+  "Aldebaran": "/Algol (Beta Persei).jpg",
+  "Algol": "/Algol (Beta Persei).jpg",
+  "Beta Persei": "/Algol (Beta Persei).jpg",
+  "Algol (Beta Persei)": "/Algol (Beta Persei).jpg",
+  "Tau Ceti": "/Tau Ceti.jpg",
+  "Barnard's Star": "/Barnard's Star.jpg",
+  "Mira": "/Mira (Omicron Ceti).jpg",
+  "Omicron Ceti": "/Mira (Omicron Ceti).jpg",
+  "Mira (Omicron Ceti)": "/Mira (Omicron Ceti).jpg",
+  "Eta Carinae": "/Eta Carinae.jpg",
+  "S5-HVS1": "/S5-HVS1.jpg",
+  "US 708": "/US 708.jpg",
+};
+
 const BLACK_HOLE_NAME_MAP: Record<string, string> = {
   "Cygnus X-1": "/Cygnus X-1.jpg",
   "M87* (Virgo A Black Hole)": "M87 (Virgo A Black Hole).jpg",
@@ -168,6 +211,13 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Moon") {
     if (MOON_NAME_MAP[obj.name]) {
       return MOON_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for stars
+  if (cat === "Star") {
+    if (STAR_NAME_MAP[obj.name]) {
+      return STAR_NAME_MAP[obj.name];
     }
   }
 
