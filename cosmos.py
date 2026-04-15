@@ -8,6 +8,13 @@ import os
 from dotenv import load_dotenv
 import logging
 
+try:
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+    SENDGRID_AVAILABLE = True
+except ImportError:
+    SENDGRID_AVAILABLE = False
+
 # Load environment variables
 load_dotenv()
 
@@ -111,6 +118,13 @@ class DifficultyEnum(str, Enum):
     INTERMEDIATE = "intermediate"
     ADVANCED = "advanced"
     EXPERT = "expert"
+
+
+class ContactRequest(BaseModel):
+    """Request model for contact form submissions"""
+    name: str = Field(..., min_length=1, max_length=100)
+    email: str = Field(...)
+    message: str = Field(..., min_length=1, max_length=5000)
 
 
 # Helper functions
@@ -446,6 +460,73 @@ async def advanced_search(
         raise HTTPException(status_code=404, detail="No objects found matching all criteria")
 
     return results[skip : skip + limit]
+
+
+@app.post("/contact", tags=["Contact"])
+async def send_contact_email(contact: ContactRequest):
+    """
+    Send a contact form email using SendGrid.
+    
+    Request body:
+    - name: Sender's name
+    - email: Sender's email address
+    - message: The contact message
+    """
+    try:
+        if not SENDGRID_AVAILABLE:
+            raise HTTPException(
+                status_code=500,
+                detail="Email service is not configured. Please install sendgrid: pip install sendgrid"
+            )
+        
+        # Get SendGrid configuration from environment
+        sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+        from_email = os.getenv("SENDGRID_FROM_EMAIL")
+        
+        if not sendgrid_api_key or not from_email:
+            logger.error("SendGrid configuration missing")
+            raise HTTPException(
+                status_code=500,
+                detail="Email service is not properly configured"
+            )
+        
+        # Initialize SendGrid client
+        sg = SendGridAPIClient(sendgrid_api_key)
+        
+        # Create email message
+        email_body = f"""New Contact Form Submission
+
+Name: {contact.name}
+Email: {contact.email}
+
+Message:
+{contact.message}"""
+        
+        mail = Mail(
+            from_email=from_email,
+            to_emails=from_email,
+            subject=f"New Contact Form Submission from {contact.name}",
+            plain_text_content=email_body
+        )
+        
+        # Send email
+        response = sg.send(mail)
+        
+        logger.info(f"Contact email sent successfully. Status: {response.status_code}")
+        
+        return {
+            "success": True,
+            "message": "Thank you for your message. We'll get back to you soon!"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending contact email: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to send email: {str(e)}"
+        )
 
 
 # Error handlers

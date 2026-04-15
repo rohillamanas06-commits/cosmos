@@ -80,25 +80,11 @@ export async function loadCosmicObjectById(objectId: string): Promise<CosmicObje
 }
 
 export function getCategoryBadgeClass(category: string): string {
-  const lower = category.toLowerCase();
-  if (lower.includes("galaxy")) return "badge-galaxy";
-  if (lower.includes("black hole")) return "badge-black-hole";
-  if (lower.includes("star") && !lower.includes("axion")) return "badge-star";
-  if (lower.includes("nebula")) return "badge-nebula";
-  if (lower.includes("pulsar") || lower.includes("neutron")) return "badge-pulsar";
-  if (lower.includes("quasar") || lower.includes("blazar")) return "badge-quasar";
-  if (lower.includes("exoplanet") || lower.includes("planet")) return "badge-exoplanet";
-  return "badge-default";
+  return "border-white/20 text-white/80 bg-white/5";
 }
 
 export function getDifficultyColor(level?: string): string {
-  switch (level) {
-    case "beginner": return "text-cosmos-aurora";
-    case "intermediate": return "text-cosmos-solar";
-    case "advanced": return "text-cosmos-supernova";
-    case "expert": return "text-cosmos-nebula";
-    default: return "text-muted-foreground";
-  }
+  return "text-white/70";
 }
 
 export const CATEGORIES = [
@@ -111,7 +97,6 @@ export const CATEGORIES = [
   "Ring Galaxy", "Interacting Galaxies", "Planetary Nebula", "Dark Nebula",
   "Protoplanetary Nebula", "Cosmic Structure", "Cosmological Structure",
   "Edge-Case Phenomenon", "Hypothetical Discovery", "Simulated Object",
-  "Luminous Fast Blue Optical Transient",
 ];
 
 export const DIFFICULTIES = ["beginner", "intermediate", "advanced", "expert"];

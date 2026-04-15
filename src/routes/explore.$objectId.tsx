@@ -1,10 +1,54 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, Sparkles, Info, Atom, BookOpen } from "lucide-react";
-import { loadCosmicObjectById, getCategoryBadgeClass, getDifficultyColor } from "@/lib/cosmic-data";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import { loadCosmicObjectById, getCategoryBadgeClass } from "@/lib/cosmic-data";
 import type { CosmicObject } from "@/lib/cosmic-data";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
+// Image map for cosmic objects
+const CATEGORY_IMAGES: Record<string, string[]> = {
+  "Galaxy": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/NGC_4414_%28NASA-med%29.jpg/1200px-NGC_4414_%28NASA-med%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+  "Black Hole": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/1200px-Black_hole_-_Messier_87_crop_max_res.jpg",
+  ],
+  "Nebula": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/NGC_604.jpg/1200px-NGC_604.jpg",
+  ],
+  "Star": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/1200px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg",
+  ],
+  "Pulsar": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+  ],
+  "Quasar": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+  "Supernova": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_nebula_original.jpg/1200px-Crab_nebula_original.jpg",
+  ],
+  "Exoplanet": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Exoplanet_Comparison_WASP-17b.png/1200px-Exoplanet_Comparison_WASP-17b.png",
+  ],
+  "Galaxy Cluster": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+};
+
+const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg";
+
+function getImageForObject(obj: CosmicObject): string {
+  const cat = obj.category;
+  const images = CATEGORY_IMAGES[cat];
+  if (images && images.length > 0) {
+    const idx = obj.id.charCodeAt(obj.id.length - 1) % images.length;
+    return images[idx];
+  }
+  return FALLBACK_IMAGE;
+}
 
 export const Route = createFileRoute("/explore/$objectId")({
   head: () => ({
@@ -12,6 +56,9 @@ export const Route = createFileRoute("/explore/$objectId")({
       { title: "Object Detail — Cosmos" },
       { name: "description", content: "Detailed view of a cosmic object." },
     ],
+  }),
+  validateSearch: (search: Record<string, any>) => ({
+    page: search.page ? Number(search.page) : 0,
   }),
   component: ObjectDetailPage,
 });
@@ -37,6 +84,7 @@ function formatValue(val: any): string {
 
 function ObjectDetailPage() {
   const { objectId } = Route.useParams();
+  const { page } = Route.useSearch();
   const [obj, setObj] = useState<CosmicObject | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,8 +98,8 @@ function ObjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-black/90">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white" />
       </div>
     );
   }
@@ -60,7 +108,7 @@ function ObjectDetailPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background">
         <h1 className="font-display text-2xl font-bold text-foreground">Object not found</h1>
-        <Link to="/explore" className="mt-4 text-primary hover:underline">Back to explorer</Link>
+        <Link to="/explore" search={{ page }} className="mt-4 text-primary hover:underline">Back to explorer</Link>
       </div>
     );
   }
@@ -68,62 +116,68 @@ function ObjectDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 md:px-6">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080808]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
           <Link
             to="/explore"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            search={{ page }}
+            className="flex items-center gap-2 text-white hover:text-white/50 transition-colors text-sm font-medium"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Explorer
           </Link>
-          <ThemeToggle />
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
+      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           {/* Title area */}
-          <div className="mb-8">
-            <div className="flex flex-wrap items-center gap-3 mb-3">
-              <span className={`rounded-full px-3 py-1 text-xs font-medium ${getCategoryBadgeClass(obj.category)}`}>
-                {obj.category}
-              </span>
-              {obj.difficulty_level && (
-                <span className={`text-xs font-medium capitalize ${getDifficultyColor(obj.difficulty_level)}`}>
-                  {obj.difficulty_level}
-                </span>
-              )}
-            </div>
-            <h1 className="font-display text-4xl font-bold text-foreground md:text-5xl">{obj.name}</h1>
-            {obj.subtype && (
-              <p className="mt-2 text-lg text-muted-foreground">{obj.subtype}</p>
-            )}
-            {obj.tags && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {obj.tags.map((tag) => (
-                  <span key={tag} className="text-xs text-muted-foreground/70">#{tag}</span>
-                ))}
+          {/* Title and Image Section */}
+          <div className="mb-8 rounded-2xl border border-white/10 bg-gradient-to-r from-white/5 to-transparent p-8 md:p-10">
+            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+              {/* Text Content */}
+              <div className="flex-1">
+                <div className="space-y-2">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold text-white leading-tight">{obj.name}</h1>
+                  {obj.subtype && (
+                    <p className="text-sm md:text-base text-white/60 font-light">{obj.subtype}</p>
+                  )}
+                </div>
               </div>
-            )}
+              
+              {/* Image preview */}
+              <div className="w-64 h-64 flex-shrink-0 md:w-72 md:h-72">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/20 bg-black/40 shadow-2xl">
+                  <img
+                    src={getImageForObject(obj)}
+                    alt={obj.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Description */}
           {obj.detailed_description && (
-            <Section icon={BookOpen} title="Description">
-              <p className="text-foreground/80 leading-relaxed">{obj.detailed_description}</p>
+            <Section title="Description">
+              <p className="text-white/70 leading-relaxed">{obj.detailed_description}</p>
             </Section>
           )}
 
           {/* Physical & Spatial data */}
           <div className="grid gap-6 md:grid-cols-2 mt-6">
             {obj.physical && Object.keys(obj.physical).length > 0 && (
-              <Section icon={Atom} title="Physical Properties">
+              <Section title="Physical Properties">
                 <DataTable data={obj.physical} />
               </Section>
             )}
             {obj.spatial && Object.keys(obj.spatial).length > 0 && (
-              <Section icon={Info} title="Spatial Data">
+              <Section title="Spatial Data">
                 <DataTable data={obj.spatial} />
               </Section>
             )}
@@ -131,11 +185,11 @@ function ObjectDetailPage() {
 
           {/* Scientific Facts */}
           {obj.scientific_facts && obj.scientific_facts.length > 0 && (
-            <Section icon={Sparkles} title="Scientific Facts" className="mt-6">
+            <Section title="Scientific Facts" className="mt-6">
               <ul className="space-y-2">
                 {obj.scientific_facts.map((fact, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground/80">
-                    <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                  <li key={i} className="flex gap-2 text-sm text-white/70">
+                    <span className="shrink-0 mt-1 h-1.5 w-1.5 rounded-full bg-white/30" />
                     {fact}
                   </li>
                 ))}
@@ -145,11 +199,11 @@ function ObjectDetailPage() {
 
           {/* Did you know */}
           {obj.did_you_know && obj.did_you_know.length > 0 && (
-            <Section icon={Sparkles} title="Did You Know?" className="mt-6">
+            <Section title="Did You Know?" className="mt-6">
               <ul className="space-y-2">
                 {obj.did_you_know.map((fact, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground/80">
-                    <span className="shrink-0 mt-1 text-cosmos-solar">💡</span>
+                  <li key={i} className="flex gap-2 text-sm text-white/70">
+                    <span className="shrink-0 mt-1 text-white/60">💡</span>
                     {fact}
                   </li>
                 ))}
@@ -159,24 +213,24 @@ function ObjectDetailPage() {
 
           {/* Formation */}
           {obj.formation_process && (
-            <Section icon={Info} title="Formation Process" className="mt-6">
-              <p className="text-foreground/80 leading-relaxed text-sm">{obj.formation_process}</p>
+            <Section title="Formation Process" className="mt-6">
+              <p className="text-white/70 leading-relaxed text-sm">{obj.formation_process}</p>
             </Section>
           )}
 
           {/* Future evolution */}
           {obj.future_evolution && (
-            <Section icon={Info} title="Future Evolution" className="mt-6">
-              <p className="text-foreground/80 leading-relaxed text-sm">{obj.future_evolution}</p>
+            <Section title="Future Evolution" className="mt-6">
+              <p className="text-white/70 leading-relaxed text-sm">{obj.future_evolution}</p>
             </Section>
           )}
 
           {/* Related */}
           {obj.related_objects && obj.related_objects.length > 0 && (
-            <Section icon={Info} title="Related Objects" className="mt-6">
+            <Section title="Related Objects" className="mt-6">
               <div className="flex flex-wrap gap-2">
                 {obj.related_objects.map((r) => (
-                  <span key={r} className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                  <span key={r} className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/60">
                     {r}
                   </span>
                 ))}
@@ -191,7 +245,7 @@ function ObjectDetailPage() {
                 href={obj.nasa_reference}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                className="inline-flex items-center gap-2 text-sm text-white/60 hover:underline"
               >
                 <ExternalLink className="h-4 w-4" />
                 View NASA Reference
@@ -205,16 +259,16 @@ function ObjectDetailPage() {
 }
 
 function Section({ icon: Icon, title, children, className = "" }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
   title: string;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-border bg-card p-5 ${className}`}>
+    <div className={`rounded-xl border border-white/10 bg-white/5 p-5 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <Icon className="h-4 w-4 text-primary" />
-        <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider">{title}</h2>
+        {Icon && <Icon className="h-4 w-4 text-white/60" />}
+        <h2 className="font-display text-sm font-semibold text-white/90 uppercase tracking-wider">{title}</h2>
       </div>
       {children}
     </div>
@@ -225,9 +279,9 @@ function DataTable({ data }: { data: Record<string, any> }) {
   return (
     <div className="space-y-2">
       {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="flex justify-between gap-4 text-sm border-b border-border/50 pb-1.5 last:border-0">
-          <span className="text-muted-foreground capitalize">{key.replace(/_/g, " ")}</span>
-          <span className="text-foreground/80 text-right font-mono text-xs max-w-[60%] break-words">
+        <div key={key} className="flex justify-between gap-4 text-sm border-b border-white/8 pb-1.5 last:border-0">
+          <span className="text-white/50 capitalize">{key.replace(/_/g, " ")}</span>
+          <span className="text-white/70 text-right font-mono text-xs max-w-[60%] break-words">
             {formatValue(value)}
           </span>
         </div>

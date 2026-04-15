@@ -1,11 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { loadCosmicData, CATEGORIES, DIFFICULTIES, getCategoryBadgeClass } from "@/lib/cosmic-data";
+import { Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, ExternalLink, ArrowLeft } from "lucide-react";
+import { loadCosmicData, CATEGORIES, getCategoryBadgeClass } from "@/lib/cosmic-data";
 import type { CosmicObject } from "@/lib/cosmic-data";
-import { CosmicCard } from "@/components/CosmicCard";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/explore/")({
   head: () => ({
@@ -16,19 +14,289 @@ export const Route = createFileRoute("/explore/")({
       { property: "og:description", content: "Browse and search 169 cosmic objects." },
     ],
   }),
+  validateSearch: (search: Record<string, any>) => ({
+    page: search.page ? Number(search.page) : 0,
+  }),
   component: ExplorePage,
 });
 
 const PAGE_SIZE = 24;
 
+// Curated NASA/public domain image map for cosmic object categories
+const CATEGORY_IMAGES: Record<string, string[]> = {
+  "Galaxy": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/NGC_4414_%28NASA-med%29.jpg/1200px-NGC_4414_%28NASA-med%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+  "Black Hole": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/1200px-Black_hole_-_Messier_87_crop_max_res.jpg",
+  ],
+  "Nebula": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/NGC_604.jpg/1200px-NGC_604.jpg",
+  ],
+  "Star": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/1200px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg",
+  ],
+  "Pulsar": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Crab_Nebula.jpg/1200px-Crab_Nebula.jpg",
+  ],
+  "Quasar": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+  "Supernova": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_nebula_original.jpg/1200px-Crab_nebula_original.jpg",
+  ],
+  "Exoplanet": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Exoplanet_Comparison_WASP-17b.png/1200px-Exoplanet_Comparison_WASP-17b.png",
+  ],
+  "Galaxy Cluster": [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg",
+  ],
+};
+
+const FALLBACK_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/1200px-Hubble_ultra_deep_field.jpg";
+
+function getImageForObject(obj: CosmicObject): string {
+  const cat = obj.category;
+  const images = CATEGORY_IMAGES[cat];
+  if (images && images.length > 0) {
+    // deterministic pick based on object id
+    const idx = obj.id.charCodeAt(obj.id.length - 1) % images.length;
+    return images[idx];
+  }
+  return FALLBACK_IMAGE;
+}
+
+function formatValue(val: any): string {
+  if (val === null || val === undefined) return "—";
+  if (typeof val === "object" && !Array.isArray(val)) {
+    const parts: string[] = [];
+    if (val.value !== undefined) parts.push(String(val.value));
+    if (val.unit) parts.push(val.unit);
+    if (val.note) parts.push(`(${val.note})`);
+    return parts.join(" ") || JSON.stringify(val);
+  }
+  if (Array.isArray(val)) return val.join(", ");
+  return String(val);
+}
+
+// ─── Image Panel ─────────────────────────────────────────────────────────────
+
+function ImagePanel({ obj, onClose, dark, currentPage }: { obj: CosmicObject; onClose: () => void; dark: boolean; currentPage: number }) {
+  const imageUrl = getImageForObject(obj);
+
+  return (
+    <motion.div
+      initial={{ x: "100%", opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: "100%", opacity: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className={`fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 flex flex-col shadow-2xl border-l ${
+        dark
+          ? "bg-[#0a0a0a] border-white/10 text-white"
+          : "bg-white border-black/10 text-black"
+      }`}
+    >
+      {/* Panel Header */}
+      <div className={`flex items-center justify-between px-5 py-4 border-b ${dark ? "border-white/10" : "border-black/10"}`}>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-semibold uppercase tracking-widest ${dark ? "text-white/40" : "text-black/40"}`}>
+            Object Detail
+          </span>
+        </div>
+        <button
+          onClick={onClose}
+          className={`p-1.5 rounded-md transition-colors ${dark ? "hover:bg-white/10 text-white/60 hover:text-white" : "hover:bg-black/5 text-black/40 hover:text-black"}`}
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Image */}
+        <div className="relative w-full aspect-video bg-black/20 overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={obj.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        </div>
+
+        {/* Info */}
+        <div className="px-5 py-5 space-y-5">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">{obj.name}</h2>
+            {obj.subtype && (
+              <p className={`text-sm mt-0.5 ${dark ? "text-white/50" : "text-black/50"}`}>{obj.subtype}</p>
+            )}
+          </div>
+
+          {obj.detailed_description && (
+            <p className={`text-sm leading-relaxed ${dark ? "text-white/70" : "text-black/70"}`}>
+              {obj.detailed_description}
+            </p>
+          )}
+
+          {/* Physical Properties */}
+          {obj.physical && Object.keys(obj.physical).length > 0 && (
+            <div>
+              <h3 className={`text-xs font-semibold uppercase tracking-widest mb-2 ${dark ? "text-white/40" : "text-black/40"}`}>
+                Physical Properties
+              </h3>
+              <div className={`rounded-lg overflow-hidden border ${dark ? "border-white/10" : "border-black/10"}`}>
+                {Object.entries(obj.physical).slice(0, 5).map(([key, val], i) => (
+                  <div
+                    key={key}
+                    className={`flex justify-between items-start px-3 py-2 text-sm ${
+                      i % 2 === 0
+                        ? dark ? "bg-white/5" : "bg-black/3"
+                        : ""
+                    }`}
+                  >
+                    <span className={`capitalize ${dark ? "text-white/50" : "text-black/50"}`}>
+                      {key.replace(/_/g, " ")}
+                    </span>
+                    <span className={`font-mono text-xs text-right max-w-[55%] ${dark ? "text-white/80" : "text-black/80"}`}>
+                      {formatValue(val)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Scientific Facts */}
+          {obj.scientific_facts && obj.scientific_facts.length > 0 && (
+            <div>
+              <h3 className={`text-xs font-semibold uppercase tracking-widest mb-2 ${dark ? "text-white/40" : "text-black/40"}`}>
+                Key Facts
+              </h3>
+              <ul className="space-y-1.5">
+                {obj.scientific_facts.slice(0, 4).map((fact, i) => (
+                  <li key={i} className={`flex gap-2 text-sm ${dark ? "text-white/65" : "text-black/65"}`}>
+                    <span className={`mt-1.5 w-1 h-1 rounded-full flex-shrink-0 ${dark ? "bg-white/40" : "bg-black/30"}`} />
+                    {fact}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Footer action */}
+      <div className={`px-5 py-4 border-t ${dark ? "border-white/10" : "border-black/10"}`}>
+        <Link
+          to="/explore/$objectId"
+          params={{ objectId: obj.id }}
+          search={{ page: currentPage }}
+          className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            dark
+              ? "bg-white text-black hover:bg-white/90"
+              : "bg-black text-white hover:bg-black/90"
+          }`}
+        >
+          View Full Details
+          <ExternalLink className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Object Row Card ──────────────────────────────────────────────────────────
+
+function ObjectCard({
+  obj,
+  index,
+  dark,
+  selected,
+  onClick,
+}: {
+  obj: CosmicObject;
+  index: number;
+  dark: boolean;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const imageUrl = getImageForObject(obj);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.3) }}
+      onClick={onClick}
+      className={`group cursor-pointer rounded-xl border overflow-hidden transition-all duration-150 flex flex-col ${
+        selected
+          ? dark
+            ? "border-white/40 bg-white/8"
+            : "border-black/30 bg-black/5"
+          : dark
+          ? "border-white/8 bg-white/3 hover:border-white/20 hover:bg-white/6"
+          : "border-black/8 bg-black/2 hover:border-black/20 hover:bg-black/4"
+      }`}
+    >
+      {/* Image */}
+      <div className="relative w-full aspect-video bg-black/20 overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={obj.name}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+      </div>
+      
+      {/* Content */}
+      <div className="px-4 py-3 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className={`font-semibold text-sm tracking-tight ${dark ? "text-white" : "text-black"}`}>
+            {obj.name}
+          </h3>
+          {obj.subtype && (
+            <p className={`text-xs mt-1 ${dark ? "text-white/45" : "text-black/45"}`}>
+              {obj.subtype}
+            </p>
+          )}
+        </div>
+        <div className="mt-3">
+          <span className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded-full border ${getCategoryBadgeClass(obj.category)}`}>
+            {obj.category}
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
 function ExplorePage() {
+  const { page: initialPage } = Route.useSearch();
+  const navigate = useNavigate({ from: "/explore/" });
   const [objects, setObjects] = useState<CosmicObject[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(initialPage);
+  const [dark, setDark] = useState(true);
+  const [activeObject, setActiveObject] = useState<CosmicObject | null>(null);
+
+  // Helper to update page and URL
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+    navigate({ search: { page: newPage } });
+  }, [navigate]);
 
   useEffect(() => {
     loadCosmicData().then((data) => {
@@ -37,10 +305,9 @@ function ExplorePage() {
     });
   }, []);
 
-  // Apply dark by default for explorer
   useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
 
   const filtered = useMemo(() => {
     let result = objects;
@@ -49,215 +316,227 @@ function ExplorePage() {
       result = result.filter(
         (o) =>
           o.name.toLowerCase().includes(q) ||
-          o.category.toLowerCase().includes(q) ||
-          (o.tags && o.tags.some((t) => t.toLowerCase().includes(q)))
+          o.category.toLowerCase().includes(q)
       );
     }
-    if (selectedCategory) {
-      result = result.filter((o) => o.category === selectedCategory);
-    }
-    if (selectedDifficulty) {
-      result = result.filter((o) => o.difficulty_level === selectedDifficulty);
-    }
+    if (selectedCategory) result = result.filter((o) => o.category === selectedCategory);
     return result;
-  }, [objects, search, selectedCategory, selectedDifficulty]);
+  }, [objects, search, selectedCategory]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  // Reset page when filters change
-  useEffect(() => {
-    setPage(0);
-  }, [search, selectedCategory, selectedDifficulty]);
+  useEffect(() => { handlePageChange(0); }, [search, selectedCategory, handlePageChange]);
 
   const activeCategories = useMemo(() => {
     const cats = new Set(objects.map((o) => o.category));
     return CATEGORIES.filter((c) => cats.has(c));
   }, [objects]);
 
+  const handleCardClick = useCallback((obj: CosmicObject) => {
+    setActiveObject((prev) => (prev?.id === obj.id ? null : obj));
+  }, []);
+
+  const bg = dark ? "bg-[#080808]" : "bg-[#f9f9f7]";
+  const textPrimary = dark ? "text-white" : "text-black";
+  const textMuted = dark ? "text-white/50" : "text-black/50";
+  const borderColor = dark ? "border-white/10" : "border-black/10";
+  const headerBg = dark ? "bg-[#080808]/90" : "bg-[#f9f9f7]/90";
+  const inputBg = dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/35 focus:border-white/30" : "bg-black/3 border-black/10 text-black placeholder:text-black/35 focus:border-black/30";
+  const btnOutline = dark ? "border-white/15 hover:border-white/30 text-white/70 hover:text-white" : "border-black/15 hover:border-black/30 text-black/70 hover:text-black";
+
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className={`flex min-h-screen items-center justify-center ${bg}`}>
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-muted-foreground">Loading cosmic data...</p>
+          <div className={`mx-auto h-8 w-8 animate-spin rounded-full border-2 ${dark ? "border-white/20 border-t-white" : "border-black/20 border-t-black"}`} />
+          <p className={`mt-4 text-sm ${textMuted}`}>Loading cosmic data...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`min-h-screen ${bg} transition-colors duration-200`}>
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
-              <span className="font-display text-lg font-bold text-foreground">Cosmos</span>
+      <header className={`sticky top-0 z-40 border-b ${borderColor} ${headerBg} backdrop-blur-xl`}>
+        <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 md:px-8 h-14">
+          {/* Left */}
+          <div className="flex items-center gap-6">
+            <Link to="/" className={`flex items-center gap-2 ${textPrimary} hover:${textMuted} transition-colors text-sm font-medium`}>
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
             </Link>
-            <span className="hidden sm:inline text-sm text-muted-foreground">
-              {filtered.length} objects
-            </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          {/* Right */}
+          <div className="flex items-center gap-2">
           </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
-        {/* Search & Filter bar */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search objects, categories, tags..."
-              className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
-              showFilters || selectedCategory || selectedDifficulty
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-card text-foreground hover:bg-accent"
-            }`}
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-            {(selectedCategory || selectedDifficulty) && (
-              <span className="rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
-                {(selectedCategory ? 1 : 0) + (selectedDifficulty ? 1 : 0)}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Filter panel */}
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden mb-6"
-            >
-              <div className="rounded-xl border border-border bg-card p-5">
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold text-foreground">Category</h3>
-                    {selectedCategory && (
-                      <button onClick={() => setSelectedCategory(null)} className="text-xs text-primary hover:underline">
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {activeCategories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-                        className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
-                          selectedCategory === cat
-                            ? "bg-primary text-primary-foreground"
-                            : `${getCategoryBadgeClass(cat)} hover:opacity-80`
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold text-foreground">Difficulty</h3>
-                    {selectedDifficulty && (
-                      <button onClick={() => setSelectedDifficulty(null)} className="text-xs text-primary hover:underline">
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {DIFFICULTIES.map((d) => (
-                      <button
-                        key={d}
-                        onClick={() => setSelectedDifficulty(selectedDifficulty === d ? null : d)}
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize transition-all ${
-                          selectedDifficulty === d
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground hover:bg-accent"
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Results */}
-        {paginated.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-lg font-medium text-foreground">No objects found</p>
-            <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or filters</p>
-            <button
-              onClick={() => { setSearch(""); setSelectedCategory(null); setSelectedDifficulty(null); }}
-              className="mt-4 text-sm text-primary hover:underline"
-            >
-              Clear all filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {paginated.map((obj, i) => (
-                <CosmicCard key={obj.id} obj={obj} index={i} />
-              ))}
+      {/* Page layout: list + panel */}
+      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7">
+        {/* Category Selection Carousel */}
+        {!selectedCategory && (
+          <div className="mb-10">
+            <div className="mb-4">
+              <h2 className={`text-2xl font-bold ${textPrimary}`}>What would you like to explore?</h2>
+              <p className={`text-sm ${textMuted} mt-1`}>Browse by category or search for specific objects</p>
             </div>
+            <div className="grid grid-cols-3 gap-3">
+              {activeCategories.map((cat) => {
+                const categoryCount = objects.filter((o) => o.category === cat).length;
+                return (
+                  <motion.button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -4 }}
+                    className={`relative rounded-xl overflow-hidden border transition-all group cursor-pointer h-32 md:h-40 ${
+                      dark
+                        ? "border-white/10 hover:border-white/30 bg-black/20"
+                        : "border-black/10 hover:border-black/30 bg-white/20"
+                    }`}
+                  >
+                    {/* Category Image */}
+                    <img
+                      src={CATEGORY_IMAGES[cat]?.[0] || FALLBACK_IMAGE}
+                      alt={cat}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                      }}
+                    />
+                    {/* Overlay Gradient */}
+                    <div className={`absolute inset-0 ${dark ? "bg-gradient-to-t from-black/80 via-black/20 to-transparent" : "bg-gradient-to-t from-black/60 via-black/20 to-transparent"}`} />
+                    
+                    {/* Text */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-end p-3">
+                      <h3 className={`text-sm md:text-base font-semibold ${dark ? "text-white" : "text-white"}`}>{cat}</h3>
+                      <p className={`text-xs ${dark ? "text-white/60" : "text-white/70"}`}>{categoryCount} objects</p>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-3">
+        {/* Active Category Header */}
+        {selectedCategory && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className={`text-2xl font-bold ${textPrimary}`}>{selectedCategory}</h2>
+                <p className={`text-sm ${textMuted} mt-1`}>{filtered.length} cosmic objects found</p>
+              </div>
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${btnOutline}`}
+              >
+                View All Categories
+              </button>
+            </div>
+            
+            {/* Search Bar */}
+            <div className={`relative rounded-lg border transition-all ${inputBg}`}>
+              <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 ${dark ? "text-white/40" : "text-black/40"}`} />
+              <input
+                type="text"
+                placeholder="Search in this category..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={`w-full pl-12 pr-4 py-3 bg-transparent outline-none text-sm`}
+              />
+              {search && (
                 <button
-                  onClick={() => setPage(Math.max(0, page - 1))}
-                  disabled={page === 0}
-                  className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground disabled:opacity-40 hover:bg-accent transition-colors"
+                  onClick={() => setSearch("")}
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${dark ? "hover:text-white/60" : "hover:text-black/60"}`}
                 >
-                  <ChevronLeft className="h-4 w-4" />
-                  Prev
+                  <X className="w-4 h-4" />
                 </button>
-                <span className="text-sm text-muted-foreground">
-                  Page {page + 1} of {totalPages}
-                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Results grid - show when category is selected */}
+        {selectedCategory && (
+          <>
+            {paginated.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <p className={`text-base font-medium ${textPrimary}`}>No objects found</p>
+                <p className={`mt-1 text-sm ${textMuted}`}>Try adjusting your search or filters</p>
                 <button
-                  onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground disabled:opacity-40 hover:bg-accent transition-colors"
+                  onClick={() => { setSearch(""); setSelectedCategory(null); }}
+                  className={`mt-4 text-sm underline ${textMuted}`}
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
+                  Clear all filters
                 </button>
               </div>
+            ) : (
+              <>
+                {/* Cards — shift right when panel is open */}
+                <div className={`grid gap-3 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-300 ${activeObject ? "lg:pr-[440px]" : ""}`}>
+                  {paginated.map((obj, i) => (
+                    <ObjectCard
+                      key={obj.id}
+                      obj={obj}
+                      index={i}
+                      dark={dark}
+                      selected={activeObject?.id === obj.id}
+                      onClick={() => handleCardClick(obj)}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className={`mt-8 flex items-center justify-center gap-3 transition-all duration-300 ${activeObject ? "lg:pr-[440px]" : ""}`}>
+                    <button
+                      onClick={() => handlePageChange(Math.max(0, page - 1))}
+                      disabled={page === 0}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg border text-sm font-medium transition-all disabled:opacity-30 ${btnOutline}`}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Prev
+                    </button>
+                    <span className={`text-sm ${textMuted}`}>
+                      {page + 1} / {totalPages}
+                    </span>
+                    <button
+                      onClick={() => handlePageChange(Math.min(totalPages - 1, page + 1))}
+                      disabled={page >= totalPages - 1}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg border text-sm font-medium transition-all disabled:opacity-30 ${btnOutline}`}
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
       </div>
+
+      {/* Overlay on mobile when panel is open */}
+      <AnimatePresence>
+        {activeObject && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+              onClick={() => setActiveObject(null)}
+            />
+            <ImagePanel obj={activeObject} onClose={() => setActiveObject(null)} dark={dark} currentPage={page} />
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
