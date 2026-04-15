@@ -185,6 +185,11 @@ const SUPERNOVA_NAME_MAP: Record<string, string> = {
   "Tycho Supernova Remnant — SNR B1572+0449": "/Tycho Supernova Remnant — SNR B1572+0449.jpg",
 };
 
+const GALAXY_CLUSTER_NAME_MAP: Record<string, string> = {
+  "El Gordo (ACT-CL J0102-4915)": "/El Gordo (ACT-CL J0102-4915).jpg",
+  "Bullet Cluster (1E 0657-56)": "/Bullet Cluster (1E 0657-56).jpg"
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -212,6 +217,13 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Supernova" || cat === "Supernova Remnant") {
     if (SUPERNOVA_NAME_MAP[obj.name]) {
       return SUPERNOVA_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for galaxy clusters
+  if (cat === "Galaxy Cluster") {
+    if (GALAXY_CLUSTER_NAME_MAP[obj.name]) {
+      return GALAXY_CLUSTER_NAME_MAP[obj.name];
     }
   }
   
