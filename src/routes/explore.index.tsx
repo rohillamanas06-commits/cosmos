@@ -188,11 +188,64 @@ const PULSAR_NAME_MAP: Record<string, string> = {
   "PSR J1748-2446ad": "/PSR J1748-2446ad.jpg",
 };
 
+const NEBULA_NAME_MAP: Record<string, string> = {
+  "Orion Nebula": "/Orion Nebula (M42).jpg",
+  "Orion Nebula (M42)": "/Orion Nebula (M42).jpg",
+  "M42": "/Orion Nebula (M42).jpg",
+  "Crab Nebula": "/Crab Nebula (M1).jpg",
+  "Crab Nebula (M1)": "/Crab Nebula (M1).jpg",
+  "Crab Nebula (M1, NGC 1952)": "/Crab Nebula (M1, NGC 1952).jpg",
+  "M1": "/Crab Nebula (M1).jpg",
+  "Eagle Nebula": "/Eagle Nebula (M16).jpg",
+  "Eagle Nebula (M16)": "/Eagle Nebula (M16).jpg",
+  "M16": "/Eagle Nebula (M16).jpg",
+  "Ring Nebula": "/Ring Nebula (M57).jpg",
+  "Ring Nebula (M57)": "/Ring Nebula (M57).jpg",
+  "M57": "/Ring Nebula (M57).jpg",
+  "Lagoon Nebula": "/Lagoon Nebula (M8).jpg",
+  "Lagoon Nebula (M8)": "/Lagoon Nebula (M8).jpg",
+  "M8": "/Lagoon Nebula (M8).jpg",
+  "Trifid Nebula": "/Trifid Nebula (M20).jpg",
+  "Trifid Nebula (M20)": "/Trifid Nebula (M20).jpg",
+  "M20": "/Trifid Nebula (M20).jpg",
+  "Helix Nebula": "/Helix Nebula (NGC 7293).jpg",
+  "Helix Nebula (NGC 7293)": "/Helix Nebula (NGC 7293).jpg",
+  "NGC 7293": "/Helix Nebula (NGC 7293).jpg",
+  "Cat's Eye Nebula": "/Cat's Eye Nebula (NGC 6543).jpg",
+  "Cat's Eye Nebula (NGC 6543)": "/Cat's Eye Nebula (NGC 6543).jpg",
+  "NGC 6543": "/Cat's Eye Nebula (NGC 6543).jpg",
+  "Butterfly Nebula": "/Butterfly Nebula (NGC 6302).jpg",
+  "Butterfly Nebula (NGC 6302)": "/Butterfly Nebula (NGC 6302).jpg",
+  "NGC 6302": "/Butterfly Nebula (NGC 6302).jpg",
+  "Horsehead Nebula": "/Horsehead Nebula (Barnard 33).jpg",
+  "Horsehead Nebula (Barnard 33)": "/Horsehead Nebula (Barnard 33).jpg",
+  "Barnard 33": "/Horsehead Nebula (Barnard 33).jpg",
+  "Carina Nebula": "/Carina Nebula (NGC 3372).jpg",
+  "Carina Nebula (NGC 3372)": "/Carina Nebula (NGC 3372).jpg",
+  "NGC 3372": "/Carina Nebula (NGC 3372).jpg",
+  "NGC 2440": "/NGC 2440 — The Colorful Nebula.jpg",
+  "NGC 2440 — The Colorful Nebula": "/NGC 2440 — The Colorful Nebula.jpg",
+};
+
 const QUASAR_NAME_MAP: Record<string, string> = {
   "3C 273": "/3C 273.jpg",
   "PKS 2126-158": "/PKS 2126-158.jpg",
   "Quasar J0313-1806": "/Quasar J0313-1806.jpg",
   "S5 0014+81": "/S5 0014+81.jpg",
+};
+
+const EXOPLANET_NAME_MAP: Record<string, string> = {
+  "51 Pegasi b": "/51 Pegasi b.jpg",
+  "Gliese 436b": "/Gliese 436b.jpg",
+  "Kepler-186f": "/Kepler-186f.jpg",
+  "Kepler-452b": "/Kepler-452b.jpg",
+  "Proxima Centauri b": "/Proxima Centauri b.jpg",
+  "TRAPPIST-1": "/TRAPPIST-1 System.jpg",
+  "TRAPPIST-1 System": "/TRAPPIST-1 System.jpg",
+  "TRAPPIST-1b": "/TRAPPIST-1b.jpg",
+  "TRAPPIST-1e": "/TRAPPIST-1e.jpg",
+  "WASP-12b": "/WASP-12b.jpg",
+  "WASP-39b": "/WASP-39b.jpg",
 };
 
 const SUPERNOVA_NAME_MAP: Record<string, string> = {
@@ -312,10 +365,24 @@ function getImageForObject(obj: CosmicObject): string {
     }
   }
   
+  // Use name-based mapping for nebulas
+  if (cat === "Nebula") {
+    if (NEBULA_NAME_MAP[obj.name]) {
+      return NEBULA_NAME_MAP[obj.name];
+    }
+  }
+  
   // Use name-based mapping for quasars
   if (cat === "Quasar") {
     if (QUASAR_NAME_MAP[obj.name]) {
       return QUASAR_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for exoplanets
+  if (cat === "Exoplanet") {
+    if (EXOPLANET_NAME_MAP[obj.name]) {
+      return EXOPLANET_NAME_MAP[obj.name];
     }
   }
   
@@ -701,7 +768,7 @@ function ExplorePage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ y: -4 }}
-                    className={`relative rounded-xl overflow-hidden border transition-all group cursor-pointer h-32 md:h-40 ${
+                    className={`relative rounded-xl overflow-hidden border transition-all group cursor-pointer h-40 md:h-46 ${
                       dark
                         ? "border-white/10 hover:border-white/30 bg-black/20"
                         : "border-black/10 hover:border-black/30 bg-white/20"
