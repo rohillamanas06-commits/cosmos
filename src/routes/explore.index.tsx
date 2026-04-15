@@ -41,9 +41,17 @@ const CATEGORY_IMAGES: Record<string, string[]> = {
     "/Large Magellanic Cloud (LMC).jpg",
   ],
   "Black Hole": [
-    "/nasa-hubble-space-telescope-17hchodU6sA-unsplash.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/600px-Black_hole_-_Messier_87_crop_max_res.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Black_hole_event_horizon_simulation.jpg/600px-Black_hole_event_horizon_simulation.jpg",
+    "/primordial black hole.jpg",
+    "/Cygnus X-1.jpg",
+    "/M87 (Virgo A Black Hole).jpg",
+    "/M87.jpg",
+    "/Sagittarius A.jpg",
+    "/TON 618.jpg",
+    "/NGC 1277 Black Hole.jpg",
+    "/M82 X-1.jpg",
+    "/AT2019qiz — Tidal Disruption Event.jpg",
+    "/GW150914 — First Gravitational Wave Event.jpg",
+    "/GW170817 — Neutron Star Merge.jpg",
   ],
   "Nebula": [
     "/aldebaran-s-qtRF_RxCAo0-unsplash.jpg",
@@ -202,6 +210,28 @@ const PLANET_NAME_MAP: Record<string, string> = {
   "Neptune": "/neptune.jpg",
 };
 
+const MOON_NAME_MAP: Record<string, string> = {
+  "Titan": "/titan.jpg",
+  "Europa": "/europa.jpg",
+  "Io": "/io.jpg",
+  "Enceladus": "/Enceladus.jpg",
+  "Ganymede": "/Ganymede.jpg",
+};
+
+const BLACK_HOLE_NAME_MAP: Record<string, string> = {
+  "Cygnus X-1": "/Cygnus X-1.jpg",
+  "M87* (Virgo A Black Hole)": "M87 (Virgo A Black Hole).jpg",
+  "M87*": "/M87.jpg",
+  "Sagittarius A": "/Sagittarius A.jpg",
+  "Sagittarius A*": "/Sagittarius A.jpg",
+  "TON 618": "/TON 618.jpg",
+  "NGC 1277 Black Hole": "/NGC 1277 Black Hole.jpg",
+  "M82 X-1": "/M82 X-1.jpg",
+  "AT2019qiz — Tidal Disruption Event": "/AT2019qiz — Tidal Disruption Event.jpg",
+  "GW150914 — First Gravitational Wave Event": "/GW150914 — First Gravitational Wave Event.jpg",
+  "GW170817 — Neutron Star Merger": "/GW170817 — Neutron Star Merge.jpg",
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -215,6 +245,13 @@ function getImageForObject(obj: CosmicObject): string {
       if (obj.name.toLowerCase().includes(key.toLowerCase())) {
         return value;
       }
+    }
+  }
+  
+  // Use name-based mapping for black holes
+  if (cat === "Black Hole") {
+    if (BLACK_HOLE_NAME_MAP[obj.name]) {
+      return BLACK_HOLE_NAME_MAP[obj.name];
     }
   }
   
@@ -243,6 +280,13 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Planet") {
     if (PLANET_NAME_MAP[obj.name]) {
       return PLANET_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for moons
+  if (cat === "Moon") {
+    if (MOON_NAME_MAP[obj.name]) {
+      return MOON_NAME_MAP[obj.name];
     }
   }
   
