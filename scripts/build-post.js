@@ -5,31 +5,36 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
+const clientDir = path.join(distDir, 'client');
+const serverDir = path.join(distDir, 'server');
+const apiDir = path.join(rootDir, 'api');
 
-// Check if build was successful
-if (!fs.existsSync(distDir)) {
-  console.error('✗ Build directory not found. TanStack Start build may have failed.');
-  process.exit(1);
+// Copy server.js to api/ for Vercel serverless deployment
+if (fs.existsSync(serverDir)) {
+  const serverFile = path.join(serverDir, 'server.js');
+  
+  if (fs.existsSync(serverFile)) {
+    // Create api directory if it doesn't exist
+    if (!fs.existsSync(apiDir)) {
+      fs.mkdirSync(apiDir, { recursive: true });
+    }
+    
+    // Copy server.js to api/index.js for Vercel
+    fs.copyFileSync(serverFile, path.join(apiDir, 'index.js'));
+    console.log('✓ Copied server.js to api/index.js for Vercel deployment');
+  }
 }
 
-// List build output for debugging
-console.log('✓ Build output structure:');
-const listFiles = (dir, prefix = '') => {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  entries.slice(0, 10).forEach(entry => {
-    console.log(`  ${prefix}${entry.name}${entry.isDirectory() ? '/' : ''}`);
-  });
-  if (entries.length > 10) {
-    console.log(`  ... and ${entries.length - 10} more items`);
-  }
-};
-listFiles(distDir);
+// Ensure client assets are accessible
+if (fs.existsSync(clientDir)) {
+  console.log('✓ Client assets available at dist/client/');
+}
 
-// If this is a TanStack Start server output, no need for manual transformation
-if (fs.existsSync(path.join(distDir, 'index.html'))) {
-  console.log('✓ TanStack Start build completed successfully for Vercel');
-} else {
-  console.warn('⚠ index.html not found in dist/ - build may need verification');
+// Verify public assets are included
+const publicDir = path.join(rootDir, 'public');
+const distPublicDir = path.join(distDir, 'public');
+if (fs.existsSync(publicDir) && !fs.existsSync(distPublicDir)) {
+  console.log('⚠ Public assets not copied to dist/ - server.js should serve from public/');
 }
 
 console.log('✓ Build post-processing complete');
