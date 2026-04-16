@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: cosmos-api
+    runtime: python
+    pythonVersion: 3.11
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn cosmos:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://cosmos.vercel.app, http://localhost:3000
+      - key: API_VERSION
+        value: "1.0.0"
+      - key: APP_NAME
+        value: "Cosmos API"
+      - key: DEBUG
+        value: "False"
+      - key: SENDGRID_API_KEY
+        scope: build
+        value: required
