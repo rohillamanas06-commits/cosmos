@@ -2,22 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "serverless": {
-    "memory": 1024,
-    "timeout": 30
-  },
-  "functions": {
-    "dist/server/server.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ]
+  "outputDirectory": "dist"
 }
