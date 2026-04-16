@@ -34,20 +34,26 @@ if (fs.existsSync(publicDir)) {
   console.log('✓ Copied public assets to dist/public/');
 }
 
-// Copy server.js to api/ for Vercel serverless deployment
+// Create Vercel serverless function
 if (fs.existsSync(serverDir)) {
-  const serverFile = path.join(serverDir, 'server.js');
-  
-  if (fs.existsSync(serverFile)) {
-    // Create api directory if it doesn't exist
-    if (!fs.existsSync(apiDir)) {
-      fs.mkdirSync(apiDir, { recursive: true });
-    }
-    
-    // Copy server.js to api/index.js for Vercel
-    fs.copyFileSync(serverFile, path.join(apiDir, 'index.js'));
-    console.log('✓ Copied server.js to api/index.js for Vercel deployment');
+  if (!fs.existsSync(apiDir)) {
+    fs.mkdirSync(apiDir, { recursive: true });
   }
+  
+  // Copy entire server directory to api/server
+  const apiServerDir = path.join(apiDir, 'server');
+  copyDir(serverDir, apiServerDir);
+  
+  // Create a handler function that uses the server
+  const handler = `import { server } from './server/server.js';
+
+export default async function handler(request) {
+  return await server.fetch(request);
+}
+`;
+  
+  fs.writeFileSync(path.join(apiDir, 'index.js'), handler);
+  console.log('✓ Created Vercel serverless function at api/index.js');
 }
 
 // Ensure client assets are accessible
@@ -56,6 +62,9 @@ if (fs.existsSync(clientDir)) {
 }
 
 console.log('✓ Build post-processing complete');
+
+
+
 
 
 
