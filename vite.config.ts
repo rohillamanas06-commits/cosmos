@@ -13,9 +13,4 @@ export default defineConfig({
       sourcemap: false,
     },
   },
-  entry: {
-    client: "src/entry.client.tsx",
-    server: "src/entry.server.tsx",
-    router: "src/router.tsx",
-  },
 });
