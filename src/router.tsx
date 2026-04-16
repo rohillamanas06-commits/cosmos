@@ -65,3 +65,6 @@ export const getRouter = () => {
 
   return router;
 };
+
+// Export router instance for TanStack Start
+export const router = getRouter();

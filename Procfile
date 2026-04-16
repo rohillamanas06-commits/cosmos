@@ -1,1 +1,3 @@
-web: uvicorn cosmos:app --host 0.0.0.0 --port $PORT
+# This is a Node.js/React app using TanStack Start and Vite
+# Vercel will automatically detect and configure the deployment
+# No custom process file needed
