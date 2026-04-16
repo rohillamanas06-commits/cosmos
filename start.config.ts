@@ -1,7 +1,7 @@
 export default {
-  routers: {
-    ssr: {
-      entry: './src/entry.server.tsx',
+  entries: {
+    router: {
+      file: './src/router.tsx',
     },
   },
 }
