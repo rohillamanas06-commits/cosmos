@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { StartClient } from '@tanstack/start/client'
+import { RouterProvider } from '@tanstack/react-router'
 import { router } from './router'
 
 const element = document.getElementById('app')
@@ -13,6 +13,7 @@ const root = ReactDOM.createRoot(element)
 
 root.render(
   <React.StrictMode>
-    <StartClient router={router} />
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )
+
