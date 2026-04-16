@@ -34,23 +34,23 @@ if (fs.existsSync(publicDir)) {
   console.log('✓ Copied public assets to dist/public/');
 }
 
-// Clean up api directory first (remove old multi-function setup)
+// Clean up api directory
 if (fs.existsSync(apiDir)) {
   fs.rmSync(apiDir, { recursive: true, force: true });
 }
 
-// Create ONE minimal Vercel serverless function (references server from dist)
+// Create single Vercel serverless function
 if (fs.existsSync(serverDir)) {
   fs.mkdirSync(apiDir, { recursive: true });
   
-  // Create a handler that dynamically imports from dist
-  const handler = `import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const serverModule = await import(path.join(__dirname, '../dist/server/server.js'));
-const { server } = serverModule;
+  const serverFile = path.join(serverDir, 'server.js');
+  if (fs.existsSync(serverFile)) {
+    // Copy only server.js to api/ (server.js is self-contained)
+    fs.copyFileSync(serverFile, path.join(apiDir, 'server.js'));
+  }
+  
+  // Create handler that imports local server
+  const handler = `import { server } from './server.js';
 
 export default async function handler(request) {
   return await server.fetch(request);
@@ -58,7 +58,7 @@ export default async function handler(request) {
 `;
   
   fs.writeFileSync(path.join(apiDir, 'index.js'), handler);
-  console.log('✓ Created single Vercel serverless function at api/index.js');
+  console.log('✓ Created single serverless function (api/index.js + api/server.js)');
 }
 
 // Ensure client assets are accessible
@@ -67,6 +67,8 @@ if (fs.existsSync(clientDir)) {
 }
 
 console.log('✓ Build post-processing complete');
+
+
 
 
 

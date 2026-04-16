@@ -1,0 +1,14 @@
+node_modules
+.git
+.env.local
+.env.*.local
+src
+scripts
+public
+cosmos.py
+data.py
+requirements.txt
+Procfile
+dist/server/assets
+dist/client
+dist/public
