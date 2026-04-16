@@ -7,12 +7,13 @@ const rootDir = path.join(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 const clientDir = path.join(distDir, 'client');
 const serverDir = path.join(distDir, 'server');
+const assetsDir = path.join(distDir, 'assets');
 
 // Move client build to root
 if (fs.existsSync(clientDir)) {
-  // Get all files from client directory
   const files = fs.readdirSync(clientDir, { recursive: true });
   let mainJsFile = '';
+  let mainJsSize = 0;
   
   files.forEach(file => {
     const srcPath = path.join(clientDir, file);
@@ -28,20 +29,36 @@ if (fs.existsSync(clientDir)) {
     if (fs.statSync(srcPath).isFile()) {
       fs.copyFileSync(srcPath, destPath);
       
-      // Find the main index JS file
-      if (file === 'index.html') {
-        // Read existing index.html if it exists
-        fs.readFileSync(destPath, 'utf-8');
-      } else if (file.match(/^assets\/index-[\w]+\.js$/)) {
-        mainJsFile = file;
+      // Find the largest index JS file (main app bundle)
+      if (file.match(/assets\/index-[\w]+\.js$/) && !file.includes('arrow-left')) {
+        const stats = fs.statSync(destPath);
+        if (stats.size > mainJsSize) {
+          mainJsFile = file;
+          mainJsSize = stats.size;
+        }
       }
     }
   });
   
-  // Create index.html if it doesn't exist
+  // Fallback: if not found, search for it
+  if (!mainJsFile && fs.existsSync(assetsDir)) {
+    const assetFiles = fs.readdirSync(assetsDir);
+    assetFiles.forEach(file => {
+      if (file.match(/^index-[\w]+\.js$/) && !file.includes('arrow')) {
+        const stats = fs.statSync(path.join(assetsDir, file));
+        if (stats.size > mainJsSize) {
+          mainJsFile = path.join('assets', file);
+          mainJsSize = stats.size;
+        }
+      }
+    });
+  }
+  
+  // Create index.html
   const indexPath = path.join(distDir, 'index.html');
-  if (!fs.existsSync(indexPath)) {
-    const html = `<!doctype html>
+  const scriptSrc = mainJsFile ? `/${mainJsFile.replace(/\\/g, '/')}` : '/assets/index.js';
+  
+  const html = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -51,16 +68,18 @@ if (fs.existsSync(clientDir)) {
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/${mainJsFile}"></script>
+    <script type="module" src="${scriptSrc}"></script>
   </body>
 </html>`;
-    fs.writeFileSync(indexPath, html);
-  }
+  
+  fs.writeFileSync(indexPath, html);
   
   // Remove client and server directories
   fs.rmSync(clientDir, { recursive: true, force: true });
   fs.rmSync(serverDir, { recursive: true, force: true });
   
-  console.log('✓ Build optimized for Vercel static hosting');
+  console.log(`✓ Build optimized for Vercel (main JS: ${mainJsFile})`);
 }
+
+
 
