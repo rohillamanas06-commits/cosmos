@@ -19,12 +19,15 @@ export default async (event, context) => {
   try {
     const server = await getServer();
     
-    const url = new URL(
-      event.rawUrl || `https://${event.headers.host || 'localhost'}${event.path || '/'}`,
-    );
-
+    // Construct URL properly from Netlify Functions event
+    const protocol = event.headers['x-forwarded-proto'] || 'https';
+    const host = event.headers['x-forwarded-host'] || event.headers.host || 'localhost';
+    const path = new URL(event.url).pathname + new URL(event.url).search;
+    
+    const url = new URL(path, `${protocol}://${host}`);
+    
     const response = await server.fetch(
-      new Request(url, {
+      new Request(url.toString(), {
         method: event.httpMethod || 'GET',
         headers: event.headers,
         body: event.body,
