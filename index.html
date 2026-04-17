@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/nasa-Yj1M5riCKk4-unsplash.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An interactive encyclopedia of 169 cosmic objects from galaxies to black holes." />
+    <meta property="og:title" content="Cosmos — Explore the Universe" />
+    <meta property="og:description" content="An interactive encyclopedia of 169 cosmic objects." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <title>Cosmos — Explore the Universe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/src/styles.css" as="style" />
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        background-color: #0f172a;
+        color: #f1f5f9;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'DM Sans', sans-serif;
+      }
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      #app {
+        display: contents;
+        visibility: hidden;
+        opacity: 0;
+      }
+      #app.loaded {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 200ms ease-in;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      // Immediately add 'loaded' class once app mounts (signaled by React)
+      const app = document.getElementById('app');
+      if (app) {
+        const observer = new MutationObserver(() => {
+          if (app.children.length > 0) {
+            app.classList.add('loaded');
+            observer.disconnect();
+          }
+        });
+        observer.observe(app, { childList: true });
+        // Fallback: force loaded after 2 seconds
+        setTimeout(() => app.classList.add('loaded'), 2000);
+      }
+    </script>
+    <script type="module" src="/src/entry.client.tsx"></script>
+  </body>
+</html>

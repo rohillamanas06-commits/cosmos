@@ -1,0 +1,11 @@
+node_modules
+.git
+.env
+.env.local
+.DS_Store
+dist
+cosmos.py
+data.py
+requirements.txt
+__pycache__
+*.py
