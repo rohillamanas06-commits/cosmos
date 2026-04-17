@@ -82,42 +82,62 @@ if (fs.existsSync(serverDir)) {
   const netlifyFunctionsDir = path.join(rootDir, 'netlify', 'functions');
   fs.mkdirSync(netlifyFunctionsDir, { recursive: true });
   
+  // Copy dist/server/assets to netlify/functions/server-assets (not copying server.js itself)
+  const serverAssetsDir = path.join(serverDir, 'assets');
+  const netlifyServerAssetsDir = path.join(netlifyFunctionsDir, 'server-assets');
+  if (fs.existsSync(serverAssetsDir)) {
+    copyDir(serverAssetsDir, netlifyServerAssetsDir);
+  }
+  
+  // Copy server.js with modified imports to netlify/functions
   const serverFile = path.join(serverDir, 'server.js');
   if (fs.existsSync(serverFile)) {
-    // Copy server.js to netlify/functions
-    fs.copyFileSync(serverFile, path.join(netlifyFunctionsDir, 'server.js'));
-    
-    // Create ESM handler wrapper for Netlify Functions
-    const handler = `import { server } from './server.js';
+    let serverCode = fs.readFileSync(serverFile, 'utf-8');
+    // Replace relative paths to use the server-assets directory
+    serverCode = serverCode.replace(/from ["']\.\/assets\//g, 'from "./server-assets/');
+    serverCode = serverCode.replace(/import\(["']\.\/assets\//g, 'import("./server-assets/');
+    fs.writeFileSync(path.join(netlifyFunctionsDir, 'server-build.js'), serverCode);
+  }
+  
+  // Create wrapper handler
+  const handler = `const mod = require('./server-build.js');
+const server = mod.default || mod.server || mod;
 
-export default async (req, context) => {
+exports.handler = async (event, context) => {
   try {
-    const url = new URL(req.url);
-    
-    const response = await server.fetch(
-      new Request(url, {
-        method: req.method,
-        headers: new Headers(req.headers),
-        body: req.body,
-      })
+    const url = new URL(
+      event.rawUrl || \`https://\${event.headers.host || 'localhost'}\${event.path || '/'}\`,
     );
 
-    const data = await response.text();
-    
-    return new Response(data, {
-      status: response.status,
-      headers: response.headers,
-    });
+    const response = await server.fetch(
+      new Request(url, {
+        method: event.httpMethod || 'GET',
+        headers: event.headers,
+        body: event.body,
+      }),
+    );
+
+    const bodyBuffer = Buffer.from(await response.arrayBuffer());
+
+    return {
+      statusCode: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: bodyBuffer.toString('base64'),
+      isBase64Encoded: true,
+    };
   } catch (error) {
     console.error('SSR Error:', error);
-    return new Response('Internal Server Error', { status: 500 });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal Server Error' }),
+    };
   }
 };
 `;
-    
-    fs.writeFileSync(path.join(netlifyFunctionsDir, 'server.mjs'), handler);
-    console.log('✓ Created Netlify Functions SSR handler');
-  }
+  
+  fs.writeFileSync(path.join(netlifyFunctionsDir, 'server.js'), handler);
+  
+  console.log('✓ Created Netlify Functions with SSR');
 }
 
 // Ensure client assets are accessible
