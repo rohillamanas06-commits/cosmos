@@ -709,6 +709,18 @@ function ExplorePage() {
   const inputBg = dark ? "bg-white/5 border-white/10 text-white placeholder:text-white/35 focus:border-white/30" : "bg-black/3 border-black/10 text-black placeholder:text-black/35 focus:border-black/30";
   const btnOutline = dark ? "border-white/15 hover:border-white/30 text-white/70 hover:text-white" : "border-black/15 hover:border-black/30 text-black/70 hover:text-black";
 
+  // Disable body scroll when panel is open
+  useEffect(() => {
+    if (activeObject) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [activeObject]);
+
   if (loading) {
     return (
       <div className={`flex min-h-screen items-center justify-center ${bg}`}>
@@ -750,7 +762,7 @@ function ExplorePage() {
       </header>
 
       {/* Page layout: list + panel */}
-      <div className="mx-auto max-w-screen-xl px-4 md:px-8 py-7">
+      <div className={`mx-auto max-w-screen-xl px-4 md:px-8 py-7 transition-all duration-300 ${activeObject ? "blur-sm pointer-events-none" : ""}`}>
         {/* Category Selection Carousel */}
         {!selectedCategory && (
           <div className="mb-10">
@@ -890,7 +902,7 @@ function ExplorePage() {
         )}
       </div>
 
-      {/* Overlay on mobile when panel is open */}
+      {/* Overlay and panel */}
       <AnimatePresence>
         {activeObject && (
           <>
@@ -898,7 +910,7 @@ function ExplorePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+              className="fixed inset-0 z-40 bg-black/40"
               onClick={() => setActiveObject(null)}
             />
             <ImagePanel obj={activeObject} onClose={() => setActiveObject(null)} dark={dark} currentPage={page} category={selectedCategory} />

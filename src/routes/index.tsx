@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -10,6 +12,18 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { label: "Explore", href: "/explore" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+    { label: "Terms", href: "/terms" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Cookies", href: "/cookies" },
+    { label: "License", href: "/license" },
+  ];
+
   return (
     <div className="w-full bg-black text-white">
       {/* Navbar */}
@@ -18,30 +32,47 @@ function LandingPage() {
           <a href="/" className="font-semibold text-white hover:text-white/80 transition-colors">
             Cosmos
           </a>
-          <div className="ml-auto flex items-center gap-6 md:gap-8 flex-wrap">
-            <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">
-              Explore
-            </a>
-            <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">
-              About
-            </a>
-            <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
-              Contact
-            </a>
-            <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">
-              Terms
-            </a>
-            <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">
-              Privacy
-            </a>
-            <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">
-              Cookies
-            </a>
-            <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">
-              License
-            </a>
+
+          {/* Desktop Navigation */}
+          <div className="ml-auto hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm text-white/60 hover:text-white transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="ml-auto md:hidden p-2 text-white/60 hover:text-white transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-black/95 border-t border-white/10">
+            <div className="flex flex-col px-6 py-4 space-y-3">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-white/60 hover:text-white transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero - full screen image */}
