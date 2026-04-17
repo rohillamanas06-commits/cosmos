@@ -36,7 +36,27 @@ if (fs.existsSync(publicDir)) {
 
 // Create SPA index.html for Netlify static hosting
 if (fs.existsSync(clientDir)) {
-  const indexHtml = `<!DOCTYPE html>
+  // Find the main JS entry file (largest one in assets)
+  const assetsDir = path.join(clientDir, 'assets');
+  let entryFile = null;
+  let maxSize = 0;
+  
+  if (fs.existsSync(assetsDir)) {
+    const files = fs.readdirSync(assetsDir);
+    files.forEach(file => {
+      if (file.startsWith('index-') && file.endsWith('.js')) {
+        const filePath = path.join(assetsDir, file);
+        const stats = fs.statSync(filePath);
+        if (stats.size > maxSize) {
+          maxSize = stats.size;
+          entryFile = file;
+        }
+      }
+    });
+  }
+  
+  if (entryFile) {
+    const indexHtml = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -45,12 +65,27 @@ if (fs.existsSync(clientDir)) {
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/assets/client-entry.js"></script>
+    <script type="module" src="/assets/${entryFile}"></script>
   </body>
 </html>`;
-  
-  fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
-  console.log('✓ Created index.html for SPA hosting');
+    
+    fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
+    console.log('✓ Created index.html with entry point: /assets/' + entryFile);
+  } else {
+    console.warn('⚠ Warning: Could not find main entry file, using fallback');
+    const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cosmos — Explore the Universe</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>`;
+    fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
+  }
 }
 
 // Clean up api directory
