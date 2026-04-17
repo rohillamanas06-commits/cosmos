@@ -96,6 +96,18 @@ if (fs.existsSync(serverDir)) {
     // Replace relative paths to use the server-assets directory
     serverCode = serverCode.replace(/from ["']\.\/assets\//g, 'from "./server-assets/');
     serverCode = serverCode.replace(/import\(["']\.\/assets\//g, 'import("./server-assets/');
+    
+    // Fix requestHandler to be async for Netlify compatibility
+    // The handler needs to properly await async responses
+    serverCode = serverCode.replace(
+      /return \(request, requestOpts\) => \{/,
+      'return async (request, requestOpts) => {'
+    );
+    serverCode = serverCode.replace(
+      /return toResponse\(attachResponseHeaders\(eventStorage\.run\(\{ h3Event \}, \(\) => handler\(request, requestOpts\)\), h3Event\), h3Event\);/,
+      'const handlerResult = await Promise.resolve(eventStorage.run({ h3Event }, () => handler(request, requestOpts)));\n    return toResponse(attachResponseHeaders(handlerResult, h3Event), h3Event);'
+    );
+    
     fs.writeFileSync(path.join(netlifyFunctionsDir, 'server-build.js'), serverCode);
   }
   
