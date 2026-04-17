@@ -15,7 +15,7 @@ async function getServer() {
   return serverModulePromise;
 }
 
-exports.handler = async (event, context) => {
+export default async (event, context) => {
   try {
     const server = await getServer();
     
@@ -31,19 +31,12 @@ exports.handler = async (event, context) => {
       }),
     );
 
-    const bodyBuffer = Buffer.from(await response.arrayBuffer());
-
-    return {
-      statusCode: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: bodyBuffer.toString('base64'),
-      isBase64Encoded: true,
-    };
+    return response;
   } catch (error) {
     console.error('SSR Error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
-    };
+    return new Response(
+      JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    );
   }
 };

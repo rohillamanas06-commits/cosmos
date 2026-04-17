@@ -99,7 +99,7 @@ if (fs.existsSync(serverDir)) {
     fs.writeFileSync(path.join(netlifyFunctionsDir, 'server-build.js'), serverCode);
   }
   
-  // Create ESM handler for Netlify Functions
+  // Create ESM handler for Netlify Functions v2 (returns Response object)
   const handler = `let serverModule = null;
 let serverModulePromise = null;
 
@@ -133,20 +133,13 @@ export default async (event, context) => {
       }),
     );
 
-    const bodyBuffer = Buffer.from(await response.arrayBuffer());
-
-    return {
-      statusCode: response.status,
-      headers: Object.fromEntries(response.headers),
-      body: bodyBuffer.toString('base64'),
-      isBase64Encoded: true,
-    };
+    return response;
   } catch (error) {
     console.error('SSR Error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
-    };
+    return new Response(
+      JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    );
   }
 };
 `;
