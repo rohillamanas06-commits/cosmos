@@ -99,7 +99,7 @@ if (fs.existsSync(serverDir)) {
     fs.writeFileSync(path.join(netlifyFunctionsDir, 'server-build.js'), serverCode);
   }
   
-  // Create CommonJS handler that dynamically imports the ESM server
+  // Create ESM handler for Netlify Functions
   const handler = `let serverModule = null;
 let serverModulePromise = null;
 
@@ -117,7 +117,7 @@ async function getServer() {
   return serverModulePromise;
 }
 
-exports.handler = async (event, context) => {
+export default async (event, context) => {
   try {
     const server = await getServer();
     
