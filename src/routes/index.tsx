@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,31 +15,31 @@ function LandingPage() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center px-6 md:px-12 py-4">
-          <Link to="/" className="font-semibold text-white hover:text-white/80 transition-colors">
+          <a href="/" className="font-semibold text-white hover:text-white/80 transition-colors">
             Cosmos
-          </Link>
+          </a>
           <div className="ml-auto flex items-center gap-6 md:gap-8 flex-wrap">
-            <Link to="/explore" search={{ page: 0, category: null }} className="text-sm text-white/60 hover:text-white transition-colors">
+            <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">
               Explore
-            </Link>
-            <Link to="/about" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">
               About
-            </Link>
-            <Link to="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
               Contact
-            </Link>
-            <Link to="/terms" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">
               Terms
-            </Link>
-            <Link to="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">
               Privacy
-            </Link>
-            <Link to="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">
               Cookies
-            </Link>
-            <Link to="/license" className="text-sm text-white/60 hover:text-white transition-colors">
+            </a>
+            <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">
               License
-            </Link>
+            </a>
           </div>
         </div>
       </nav>
@@ -54,19 +54,6 @@ function LandingPage() {
           height={1080}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
-        <div className="absolute bottom-16 left-6 md:left-12">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">Cosmos</h1>
-          <p className="text-lg md:text-xl text-white/70 mb-8 max-w-md">
-            An interactive encyclopedia of 169 cosmic objects from galaxies to black holes.
-          </p>
-          <Link
-            to="/explore"
-            search={{ page: 0, category: null }}
-            className="inline-flex items-center gap-2 bg-white text-black font-semibold px-6 py-3 rounded-lg hover:bg-white/90 transition-colors"
-          >
-            Start Exploring
-          </Link>
-        </div>
       </div>
 
       {/* Footer */}
@@ -121,9 +108,9 @@ function LandingPage() {
               <h3 className="font-display font-semibold text-white mb-6">Product</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link to="/explore" search={{ page: 0, category: null }} className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/explore" className="text-sm text-white/60 hover:text-white transition-colors">
                     Cosmos Explorer
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -160,19 +147,19 @@ function LandingPage() {
               <h3 className="font-display font-semibold text-white mb-6">Company</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link to="/about" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/about" className="text-sm text-white/60 hover:text-white transition-colors">
                     About Us
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/contact" className="text-sm text-white/60 hover:text-white transition-colors">
                     Contact Us
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/faq" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/faq" className="text-sm text-white/60 hover:text-white transition-colors">
                     FAQ
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -182,24 +169,24 @@ function LandingPage() {
               <h3 className="font-display font-semibold text-white mb-6">Legal</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link to="/terms" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/terms" className="text-sm text-white/60 hover:text-white transition-colors">
                     Terms of Service
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/privacy" className="text-sm text-white/60 hover:text-white transition-colors">
                     Privacy Policy
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/cookies" className="text-sm text-white/60 hover:text-white transition-colors">
                     Cookie Policy
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/license" className="text-sm text-white/60 hover:text-white transition-colors">
+                  <a href="/license" className="text-sm text-white/60 hover:text-white transition-colors">
                     License
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
