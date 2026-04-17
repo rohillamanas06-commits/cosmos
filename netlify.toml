@@ -6,13 +6,24 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Catch-all for SPA routes (but don't interfere with static files)
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/server"
   status = 200
-  force = true
+  conditions = { "Not-HasFileExtension" = true }
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Content-Type = "text/css"
