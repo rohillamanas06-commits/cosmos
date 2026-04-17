@@ -34,6 +34,25 @@ if (fs.existsSync(publicDir)) {
   console.log('✓ Copied public assets to dist/public/');
 }
 
+// Create SPA index.html for Netlify static hosting
+if (fs.existsSync(clientDir)) {
+  const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cosmos — Explore the Universe</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/assets/client-entry.js"></script>
+  </body>
+</html>`;
+  
+  fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
+  console.log('✓ Created index.html for SPA hosting');
+}
+
 // Clean up api directory
 if (fs.existsSync(apiDir)) {
   fs.rmSync(apiDir, { recursive: true, force: true });
