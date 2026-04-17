@@ -34,7 +34,7 @@ if (fs.existsSync(publicDir)) {
   console.log('✓ Copied public assets to dist/public/');
 }
 
-// Create SPA index.html for Netlify static hosting
+// Create SPA index.html for static assets fallback
 if (fs.existsSync(clientDir)) {
   // Find the main JS entry file (largest one in assets)
   const assetsDir = path.join(clientDir, 'assets');
@@ -55,25 +55,8 @@ if (fs.existsSync(clientDir)) {
     });
   }
   
-  if (entryFile) {
-    const indexHtml = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cosmos — Explore the Universe</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/assets/${entryFile}"></script>
-  </body>
-</html>`;
-    
-    fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
-    console.log('✓ Created index.html with entry point: /assets/' + entryFile);
-  } else {
-    console.warn('⚠ Warning: Could not find main entry file, using fallback');
-    const indexHtml = `<!DOCTYPE html>
+  // Minimal HTML - Server will handle full rendering via SSR
+  const indexHtml = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -84,35 +67,57 @@ if (fs.existsSync(clientDir)) {
     <div id="app"></div>
   </body>
 </html>`;
-    fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
-  }
+  
+  fs.writeFileSync(path.join(clientDir, 'index.html'), indexHtml);
+  console.log('✓ Created fallback index.html for static assets');
 }
 
-// Clean up api directory
+// Clean up old api directory
 if (fs.existsSync(apiDir)) {
   fs.rmSync(apiDir, { recursive: true, force: true });
 }
 
-// Create single Vercel serverless function
+// Create Netlify Functions handler
 if (fs.existsSync(serverDir)) {
-  fs.mkdirSync(apiDir, { recursive: true });
+  const netlifyFunctionsDir = path.join(rootDir, 'netlify', 'functions');
+  fs.mkdirSync(netlifyFunctionsDir, { recursive: true });
   
   const serverFile = path.join(serverDir, 'server.js');
   if (fs.existsSync(serverFile)) {
-    // Copy only server.js to api/ (server.js is self-contained)
-    fs.copyFileSync(serverFile, path.join(apiDir, 'server.js'));
-  }
-  
-  // Create handler that imports local server
-  const handler = `import { server } from './server.js';
+    // Copy server.js to netlify/functions
+    fs.copyFileSync(serverFile, path.join(netlifyFunctionsDir, 'server.js'));
+    
+    // Create ESM handler wrapper for Netlify Functions
+    const handler = `import { server } from './server.js';
 
-export default async function handler(request) {
-  return await server.fetch(request);
-}
+export default async (req, context) => {
+  try {
+    const url = new URL(req.url);
+    
+    const response = await server.fetch(
+      new Request(url, {
+        method: req.method,
+        headers: new Headers(req.headers),
+        body: req.body,
+      })
+    );
+
+    const data = await response.text();
+    
+    return new Response(data, {
+      status: response.status,
+      headers: response.headers,
+    });
+  } catch (error) {
+    console.error('SSR Error:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
+};
 `;
-  
-  fs.writeFileSync(path.join(apiDir, 'index.js'), handler);
-  console.log('✓ Created single serverless function (api/index.js + api/server.js)');
+    
+    fs.writeFileSync(path.join(netlifyFunctionsDir, 'server.mjs'), handler);
+    console.log('✓ Created Netlify Functions SSR handler');
+  }
 }
 
 // Ensure client assets are accessible
