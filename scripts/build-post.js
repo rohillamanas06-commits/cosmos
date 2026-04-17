@@ -82,7 +82,7 @@ if (fs.existsSync(serverDir)) {
   const netlifyFunctionsDir = path.join(rootDir, 'netlify', 'functions');
   fs.mkdirSync(netlifyFunctionsDir, { recursive: true });
   
-  // Copy dist/server/assets to netlify/functions/server-assets (not copying server.js itself)
+  // Copy dist/server/assets to netlify/functions/server-assets
   const serverAssetsDir = path.join(serverDir, 'assets');
   const netlifyServerAssetsDir = path.join(netlifyFunctionsDir, 'server-assets');
   if (fs.existsSync(serverAssetsDir)) {
@@ -99,12 +99,28 @@ if (fs.existsSync(serverDir)) {
     fs.writeFileSync(path.join(netlifyFunctionsDir, 'server-build.js'), serverCode);
   }
   
-  // Create wrapper handler
-  const handler = `const mod = require('./server-build.js');
-const server = mod.default || mod.server || mod;
+  // Create CommonJS handler that dynamically imports the ESM server
+  const handler = `let serverModule = null;
+let serverModulePromise = null;
+
+async function getServer() {
+  if (serverModule) return serverModule;
+  
+  if (!serverModulePromise) {
+    serverModulePromise = (async () => {
+      const mod = await import('./server-build.js');
+      serverModule = mod.default || mod.server || mod;
+      return serverModule;
+    })();
+  }
+  
+  return serverModulePromise;
+}
 
 exports.handler = async (event, context) => {
   try {
+    const server = await getServer();
+    
     const url = new URL(
       event.rawUrl || \`https://\${event.headers.host || 'localhost'}\${event.path || '/'}\`,
     );
@@ -129,7 +145,7 @@ exports.handler = async (event, context) => {
     console.error('SSR Error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal Server Error' }),
+      body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
     };
   }
 };
