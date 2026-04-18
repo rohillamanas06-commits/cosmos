@@ -431,7 +431,7 @@ function ObjectDetailPage() {
           )}
 
           {/* Physical & Spatial data */}
-          <div className="grid gap-6 md:grid-cols-2 mt-6">
+          <div className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-2 mt-6">
             {obj.physical && Object.keys(obj.physical).length > 0 && (
               <Section title="Physical Properties">
                 <DataTable data={obj.physical} />
@@ -526,10 +526,10 @@ function Section({ icon: Icon, title, children, className = "" }: {
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-white/10 bg-white/5 p-5 ${className}`}>
+    <div className={`rounded-xl border border-white/10 bg-white/5 p-4 sm:p-5 overflow-hidden ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         {Icon && <Icon className="h-4 w-4 text-white/60" />}
-        <h2 className="font-display text-sm font-semibold text-white/90 uppercase tracking-wider">{title}</h2>
+        <h2 className="font-display text-xs sm:text-sm font-semibold text-white/90 uppercase tracking-wider">{title}</h2>
       </div>
       {children}
     </div>
@@ -538,11 +538,11 @@ function Section({ icon: Icon, title, children, className = "" }: {
 
 function DataTable({ data }: { data: Record<string, any> }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 overflow-hidden">
       {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="flex justify-between gap-4 text-sm border-b border-white/8 pb-1.5 last:border-0">
+        <div key={key} className="flex flex-col sm:flex-row sm:justify-between sm:gap-4 text-sm border-b border-white/8 pb-1.5 last:border-0">
           <span className="text-white/50 capitalize">{key.replace(/_/g, " ")}</span>
-          <span className="text-white/70 text-right font-mono text-xs max-w-[60%] break-words">
+          <span className="text-white/70 text-right font-mono text-xs break-words overflow-hidden">
             {formatValue(value)}
           </span>
         </div>
