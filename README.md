@@ -1,5 +1,5 @@
 # 🌌 Cosmos - Explore the Universe
-
+An interactive encyclopedia for exploring and understanding the cosmos. Discover 169+ cosmic objects including galaxies, nebulae, stars, black holes, and more with rich scientific data and beautiful visualizations.
 An interactive encyclopedia for exploring and understanding the cosmos. Discover 169+ cosmic objects including galaxies, nebulae, stars, black holes, and more with rich scientific data and beautiful visualizations.
 
 ## 🌟 About Cosmos
@@ -9,8 +9,8 @@ Cosmos is a cutting-edge web application that brings the universe to your finger
 ## 📸 Screenshots
 
 ![ss 1](public/taneli-lahtinen-3G8p__Lv8iM-unsplash.jpg)
-![ss 2](public/Ring%20Galaxy.jpg)
-![ss 3](public/Neptune.jpg)
+![ss 2](public/ring%20galaxies.jpg)
+![ss 3](public/neptune.jpg)
 ![ss 4](public/milky%20way%20galaxy.jpg)
 
 ### Why Cosmos?
