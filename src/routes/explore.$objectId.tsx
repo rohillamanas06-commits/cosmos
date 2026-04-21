@@ -244,6 +244,11 @@ const NEUTRON_STAR_SUBTYPE_MAP: Record<string, Record<string, string>> = {
   },
 };
 
+const BROWN_DWARF_NAME_MAP: Record<string, string> = {
+  "2MASS J0523-1403": "/2MASS J0523-1403.jpg",
+  "WISE 0855-0714": "/WISE 0855-0714.jpg",
+  "SDSS 1416+13B": "/SDSS 1416+13B.jpg",
+};
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -328,6 +333,13 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Planet") {
     if (PLANET_NAME_MAP[obj.name]) {
       return PLANET_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for brown dwarfs
+  if (cat === "Brown Dwarf") {
+    if (BROWN_DWARF_NAME_MAP[obj.name]) {
+      return BROWN_DWARF_NAME_MAP[obj.name];
     }
   }
   
