@@ -216,6 +216,34 @@ const BLACK_HOLE_NAME_MAP: Record<string, string> = {
   "GW170817 — Neutron Star Merger": "/GW170817 — Neutron Star Merge.jpg",
 };
 
+const NEUTRON_STAR_NAME_MAP: Record<string, string> = {
+  "Crab Pulsar (PSR B0531+21)": "/Crab Pulsar (PSR B0531+21).jpg",
+  "Vela Pulsar (PSR B0833-45)": "/Vela Pulsar (PSR B0833-45).jpg",
+  "PSR J0437-4715 (Millisecond Pulsar)": "/PSR J0437-4715 (Millisecond Pulsar).jpg",
+  "Geminga (PSR J0633+1746)": "/Geminga (PSR J0633+1746).jpg",
+  "PSR B1919+21 (First Discovered Pulsar)": "/PSR B1919+21 (First Discovered Pulsar).jpg",
+  "Double Pulsar (PSR J0737-3039)": "/Double Pulsar (PSR J0737-3039).jpg",
+  "PSR B1821-24 (Millisecond Pulsar in Globular Cluster)": "/PSR B1821-24 (Millisecond Pulsar in Globular Cluster).jpg",
+  "PSR J1748−2446ad (Fastest Pulsar)": "/PSR J1748−2446ad (Fastest Pulsar).jpg",
+  "Black Widow Pulsar (PSR B1957+20)": "/Black Widow Pulsar (PSR B1957+20).jpg",
+  "PSR J0030+0451 (NICER Mass-Radius)": "/PSR J0030+0451 (NICER Mass-Radius).jpg",
+  "PSR J0030+0451": "/PSR J0030+0451.jpg",
+  "Pulsar Wind Nebula (General Class)": "/Pulsar Wind Nebula (General Class).jpg",
+  "SGR 0418+5729": "/SGR 0418+5729.jpg",
+  "SGR J1745-2900": "/SGR J1745-2900.jpg",
+  "SGR 1806-20": "/SGR 1806-20.jpg",
+  "SGR 1806-20 (Magnetar)": "/SGR 1806-20 (Magnetar).jpg",
+  "Cas A Neutron Star (CXO J232327.9+584842)": "/Cas A Neutron Star (CXO J232327.9+584842).jpg",
+  "RCW 103 (1E 161348-5055.5)": "/RCW 103 (1E 161348-5055.5).jpg",
+};
+
+const NEUTRON_STAR_SUBTYPE_MAP: Record<string, Record<string, string>> = {
+  "4U 0142+61": {
+    "Magnetar \u2014 Anomalous X-ray Pulsar (AXP)": "/4U 0142+61 Magnetar \u2014 Anomalous X-ray Pulsar (AXP).jpg",
+    "Magnetar with Protoplanetary Disk": "/4U 0142+61 Magnetar with Protoplanetary Disk.jpg",
+  },
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -236,6 +264,21 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Black Hole") {
     if (BLACK_HOLE_NAME_MAP[obj.name]) {
       return BLACK_HOLE_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for neutron stars
+  if (cat === "Neutron Star") {
+    // Special handling for 4U 0142+61 which has two entries with different subtypes
+    if (obj.name === "4U 0142+61" && obj.subtype && NEUTRON_STAR_SUBTYPE_MAP["4U 0142+61"]) {
+      const subtypeMap = NEUTRON_STAR_SUBTYPE_MAP["4U 0142+61"];
+      if (subtypeMap[obj.subtype]) {
+        return subtypeMap[obj.subtype];
+      }
+    }
+    // Regular name-based lookup
+    if (NEUTRON_STAR_NAME_MAP[obj.name]) {
+      return NEUTRON_STAR_NAME_MAP[obj.name];
     }
   }
   
