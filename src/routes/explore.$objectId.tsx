@@ -249,6 +249,19 @@ const BROWN_DWARF_NAME_MAP: Record<string, string> = {
   "WISE 0855-0714": "/WISE 0855-0714.jpg",
   "SDSS 1416+13B": "/SDSS 1416+13B.jpg",
 };
+
+const VARIABLE_STAR_NAME_MAP: Record<string, string> = {
+  "Eta Carinae": "/Eta Carinae.jpg",
+  "V838 Monocerotis": "/V838 Monocerotis.jpg",
+};
+
+const BLAZAR_NAME_MAP: Record<string, string> = {
+  "3C 279": "/3C 279.jpg",
+  "Markarian 421 (Mrk 421)": "/Markarian 421 (Mrk 421).jpg",
+  "Markarian 501 (Mrk 501)": "/Markarian 501 (Mrk 501).jpg",
+  "PKS 2155-304": "/PKS 2155-304.jpg",
+};
+
 function getImageForObject(obj: CosmicObject): string {
   const cat = obj.category;
   
@@ -354,6 +367,20 @@ function getImageForObject(obj: CosmicObject): string {
   if (cat === "Star") {
     if (STAR_NAME_MAP[obj.name]) {
       return STAR_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for variable stars
+  if (cat === "Variable Star") {
+    if (VARIABLE_STAR_NAME_MAP[obj.name]) {
+      return VARIABLE_STAR_NAME_MAP[obj.name];
+    }
+  }
+  
+  // Use name-based mapping for blazars
+  if (cat === "Blazar") {
+    if (BLAZAR_NAME_MAP[obj.name]) {
+      return BLAZAR_NAME_MAP[obj.name];
     }
   }
 
