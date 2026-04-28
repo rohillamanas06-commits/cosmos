@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -13,6 +13,21 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const images = [
+    "/pawel-nolbert-62OK9xwVA0c-unsplash.jpg",
+    "/juskteez-vu-mwhklqGVzck-unsplash.jpg",
+    "/desktop.jpg",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImageIndex(prev => (prev + 1) % images.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const navLinks = [
     { label: "Explore", href: "/explore" },
@@ -77,13 +92,18 @@ function LandingPage() {
 
       {/* Hero - full screen image */}
       <div className="relative w-full h-screen overflow-hidden">
-        <img
-          src="/pawel-nolbert-62OK9xwVA0c-unsplash.jpg"
-          alt="Cosmos hero"
-          className="w-full h-full object-cover"
-          width={1920}
-          height={1080}
-        />
+        {images.map((src, idx) => (
+          <img
+            key={idx}
+            src={src}
+            alt={`Image ${idx + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              imageIndex === idx ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            width={1920}
+            height={1080}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
       </div>
 
