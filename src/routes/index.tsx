@@ -17,8 +17,6 @@ function LandingPage() {
 
   const images = [
     "/pawel-nolbert-62OK9xwVA0c-unsplash.jpg",
-    "/juskteez-vu-mwhklqGVzck-unsplash.jpg",
-    "/desktop.jpg",
   ];
 
   useEffect(() => {
